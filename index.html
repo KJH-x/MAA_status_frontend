@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAA Dashboard</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">MAA OneBot Adapter</p>
+        <h1>Runtime Dashboard</h1>
+      </div>
+      <div class="hero-meta">
+        <span id="connection-badge" class="badge badge-neutral">Connecting</span>
+        <span id="source-label" class="meta-chip">source: pending</span>
+      </div>
+    </header>
+
+    <main class="dashboard-grid">
+      <section class="card card-primary">
+        <h2>System</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Controller</span>
+            <strong id="controller-state">-</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">MAA Status</span>
+            <strong id="maa-status">-</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Current User</span>
+            <strong id="current-user">-</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Next User</span>
+            <strong id="next-user">-</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Progress</h2>
+        <div class="progress-row">
+          <span id="progress-text">0 / 0</span>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-track">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <p id="last-update" class="muted">Last update: -</p>
+      </section>
+
+      <section class="card">
+        <h2>Health</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Connection</span>
+            <strong id="connection-text">-</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Polling</span>
+            <strong id="poll-status">Initializing</strong>
+          </div>
+          <div class="stat-item stat-item-wide">
+            <span class="stat-label">Error</span>
+            <strong id="error-text">None</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card image-card">
+        <div class="card-head">
+          <h2>Report</h2>
+          <span id="report-status" class="meta-chip">waiting</span>
+        </div>
+        <div class="image-frame">
+          <img id="report-image" alt="Report image" hidden>
+          <div id="report-placeholder" class="image-placeholder">No report image</div>
+        </div>
+      </section>
+
+      <section class="card image-card">
+        <div class="card-head">
+          <h2>Screenshot</h2>
+          <span id="screenshot-status" class="meta-chip">waiting</span>
+        </div>
+        <div class="image-frame">
+          <img id="screenshot-image" alt="Screenshot image" hidden>
+          <div id="screenshot-placeholder" class="image-placeholder">No screenshot</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="mode-label">mode: local</span>
+      <span id="status-url">status: pending</span>
+    </footer>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
