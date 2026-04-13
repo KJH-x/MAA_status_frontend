@@ -9,9 +9,10 @@
 <body>
   <div class="page-shell">
     <header class="hero">
-      <div>
+      <div class="hero-copy">
         <p class="eyebrow">MAA OneBot Adapter</p>
         <h1>Runtime Dashboard</h1>
+        <p class="hero-subtitle">运行状态、执行进度与系统遥测</p>
       </div>
       <div class="hero-meta">
         <span id="connection-badge" class="badge badge-neutral">Connecting</span>
@@ -20,55 +21,113 @@
     </header>
 
     <main class="dashboard-grid">
-      <section class="card card-primary">
-        <h2>System</h2>
-        <div class="stats-grid">
-          <div class="stat-item">
+      <section class="card card-main">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Main Runtime</p>
+            <h2>Execution Status</h2>
+          </div>
+          <span id="last-update-chip" class="meta-chip">Last update: -</span>
+        </div>
+
+        <div class="status-grid">
+          <article class="status-block highlight-block">
+            <span class="stat-label">Current User</span>
+            <strong id="current-user" class="stat-hero">-</strong>
+            <span class="stat-note">当前执行账号 / Session</span>
+          </article>
+
+          <article class="status-block">
             <span class="stat-label">Controller</span>
             <strong id="controller-state">-</strong>
-          </div>
-          <div class="stat-item">
+          </article>
+
+          <article class="status-block">
             <span class="stat-label">MAA Status</span>
             <strong id="maa-status">-</strong>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Current User</span>
-            <strong id="current-user">-</strong>
-          </div>
-          <div class="stat-item">
+          </article>
+
+          <article class="status-block">
             <span class="stat-label">Next User</span>
             <strong id="next-user">-</strong>
-          </div>
-        </div>
-      </section>
+          </article>
 
-      <section class="card">
-        <h2>Progress</h2>
-        <div class="progress-row">
-          <span id="progress-text">0 / 0</span>
-          <span id="progress-percent">0%</span>
-        </div>
-        <div class="progress-track">
-          <div id="progress-bar" class="progress-bar"></div>
-        </div>
-        <p id="last-update" class="muted">Last update: -</p>
-      </section>
-
-      <section class="card">
-        <h2>Health</h2>
-        <div class="stats-grid">
-          <div class="stat-item">
+          <article class="status-block">
             <span class="stat-label">Connection</span>
             <strong id="connection-text">-</strong>
+          </article>
+        </div>
+
+        <section class="progress-panel">
+          <div class="progress-header">
+            <div>
+              <p class="section-kicker">Task Progress</p>
+              <strong id="progress-text">0 / 0</strong>
+              <p id="last-update" class="hero-subtitle">Last update: -</p>
+            </div>
+            <strong id="progress-percent">0%</strong>
           </div>
-          <div class="stat-item">
+          <div class="progress-track">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+        </section>
+
+        <section class="meta-grid">
+          <article class="status-block">
             <span class="stat-label">Polling</span>
             <strong id="poll-status">Initializing</strong>
-          </div>
-          <div class="stat-item stat-item-wide">
+          </article>
+          <article class="status-block meta-error">
             <span class="stat-label">Error</span>
             <strong id="error-text">None</strong>
+          </article>
+        </section>
+      </section>
+
+      <section class="card card-metrics">
+        <div class="section-head section-head-compact">
+          <div>
+            <p class="section-kicker">System Monitor</p>
+            <h2>Telemetry</h2>
           </div>
+        </div>
+
+        <div class="ring-list">
+          <article class="ring-card">
+            <div class="ring-shell cpu-ring" style="--pct:0">
+              <div class="ring-inner">
+                <span class="ring-value" id="cpu-value">0%</span>
+              </div>
+            </div>
+            <div class="ring-copy">
+              <strong>CPU</strong>
+              <span>Processor Usage</span>
+            </div>
+          </article>
+
+          <article class="ring-card">
+            <div class="ring-shell gpu-ring" style="--pct:0">
+              <div class="ring-inner">
+                <span class="ring-value" id="gpu-value">0%</span>
+              </div>
+            </div>
+            <div class="ring-copy">
+              <strong>GPU</strong>
+              <span>Graphics Usage</span>
+            </div>
+          </article>
+
+          <article class="ring-card">
+            <div class="ring-shell mem-ring" style="--pct:0">
+              <div class="ring-inner">
+                <span class="ring-value" id="mem-value">0%</span>
+              </div>
+            </div>
+            <div class="ring-copy">
+              <strong>Memory</strong>
+              <span id="mem-detail">0 / 0 GB</span>
+            </div>
+          </article>
         </div>
       </section>
     </main>

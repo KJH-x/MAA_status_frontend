@@ -7,6 +7,7 @@
   const els = {
     connectionBadge: document.getElementById("connection-badge"),
     sourceLabel: document.getElementById("source-label"),
+    lastUpdateChip: document.getElementById("last-update-chip"),
     controllerState: document.getElementById("controller-state"),
     maaStatus: document.getElementById("maa-status"),
     currentUser: document.getElementById("current-user"),
@@ -18,6 +19,10 @@
     connectionText: document.getElementById("connection-text"),
     pollStatus: document.getElementById("poll-status"),
     errorText: document.getElementById("error-text"),
+    cpuValue: document.getElementById("cpu-value"),
+    gpuValue: document.getElementById("gpu-value"),
+    memValue: document.getElementById("mem-value"),
+    memDetail: document.getElementById("mem-detail"),
     modeLabel: document.getElementById("mode-label"),
     statusUrl: document.getElementById("status-url")
   };
@@ -60,6 +65,8 @@
   function renderStatus(data) {
     const stale = isStale(data);
     const online = Boolean(data.online) && !stale;
+    const telemetry = data.telemetry || {};
+    const mem = telemetry.mem || {};
 
     if (online) {
       setBadge("ok", "Online");
@@ -78,8 +85,22 @@
     els.progressPercent.textContent = `${Number(data.progress_percent || 0).toFixed(0)}%`;
     els.progressBar.style.width = `${Math.max(0, Math.min(100, Number(data.progress_percent || 0)))}%`;
     els.lastUpdate.textContent = `Last update: ${formatDate(data.last_update)}`;
+    els.lastUpdateChip.textContent = `Last update: ${formatDate(data.last_update)}`;
     els.connectionText.textContent = data.connection || "-";
     els.errorText.textContent = data.last_error || "None";
+    renderRing(document.querySelector(".cpu-ring"), els.cpuValue, telemetry.cpu, "%");
+    renderRing(document.querySelector(".gpu-ring"), els.gpuValue, telemetry.gpu, "%");
+    renderRing(document.querySelector(".mem-ring"), els.memValue, mem.percent, "%");
+    els.memDetail.textContent = `${Number(mem.used_gb || 0).toFixed(1)} / ${Number(mem.total_gb || 0).toFixed(1)} GB`;
+  }
+
+  function renderRing(shell, valueEl, rawValue, suffix) {
+    if (!shell || !valueEl) {
+      return;
+    }
+    const value = Math.max(0, Math.min(100, Number(rawValue || 0)));
+    shell.style.setProperty("--pct", String(value));
+    valueEl.textContent = `${value.toFixed(0)}${suffix}`;
   }
 
   async function fetchStatus() {
