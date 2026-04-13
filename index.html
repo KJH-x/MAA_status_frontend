@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+  <div class="refresh-rail" aria-hidden="true">
+    <div id="refresh-bar" class="refresh-bar"></div>
+  </div>
+
   <div class="page-shell">
     <header class="hero">
       <div class="hero-copy">
@@ -30,33 +34,18 @@
           <span id="last-update-chip" class="meta-chip">Last update: -</span>
         </div>
 
-        <div class="status-grid">
-          <article class="status-block highlight-block">
-            <span class="stat-label">Current User</span>
-            <strong id="current-user" class="stat-hero">-</strong>
-            <span class="stat-note">当前执行账号 / Session</span>
-          </article>
-
-          <article class="status-block">
-            <span class="stat-label">Controller</span>
-            <strong id="controller-state">-</strong>
-          </article>
-
-          <article class="status-block">
-            <span class="stat-label">MAA Status</span>
-            <strong id="maa-status">-</strong>
-          </article>
-
-          <article class="status-block">
+        <article class="user-dual-card">
+          <div class="user-pane user-pane-current">
+            <span class="stat-label stat-label-light">Current User</span>
+            <strong id="current-user" class="stat-hero stat-hero-light">-</strong>
+            <span class="stat-note stat-note-light">当前执行账号 / Session</span>
+          </div>
+          <div class="user-pane user-pane-next">
             <span class="stat-label">Next User</span>
-            <strong id="next-user">-</strong>
-          </article>
-
-          <article class="status-block">
-            <span class="stat-label">Connection</span>
-            <strong id="connection-text">-</strong>
-          </article>
-        </div>
+            <strong id="next-user" class="next-user-value">-</strong>
+            <span class="stat-note">即将执行</span>
+          </div>
+        </article>
 
         <section class="progress-panel">
           <div class="progress-header">
@@ -72,11 +61,29 @@
           </div>
         </section>
 
-        <section class="meta-grid">
+        <div class="status-grid status-grid-main">
+          <article class="status-block">
+            <span class="stat-label">Controller</span>
+            <strong id="controller-state">-</strong>
+          </article>
+
+          <article class="status-block">
+            <span class="stat-label">MAA Status</span>
+            <strong id="maa-status">-</strong>
+          </article>
+
+          <article class="status-block">
+            <span class="stat-label">Connection</span>
+            <strong id="connection-text">-</strong>
+          </article>
+
           <article class="status-block">
             <span class="stat-label">Polling</span>
             <strong id="poll-status">Initializing</strong>
           </article>
+        </div>
+
+        <section class="meta-grid">
           <article class="status-block meta-error">
             <span class="stat-label">Error</span>
             <strong id="error-text">None</strong>
@@ -131,11 +138,6 @@
         </div>
       </section>
     </main>
-
-    <footer class="footer">
-      <span id="mode-label">mode: local</span>
-      <span id="status-url">status: pending</span>
-    </footer>
   </div>
 
   <script src="./config.js"></script>

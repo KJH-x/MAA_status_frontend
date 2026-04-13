@@ -1,10 +1,13 @@
 (function () {
   const config = window.DASHBOARD_CONFIG || {};
   const state = {
-    lastGoodData: null
+    lastGoodData: null,
+    lastFetchAt: 0,
+    refreshTimerId: null
   };
 
   const els = {
+    refreshBar: document.getElementById("refresh-bar"),
     connectionBadge: document.getElementById("connection-badge"),
     sourceLabel: document.getElementById("source-label"),
     lastUpdateChip: document.getElementById("last-update-chip"),
@@ -22,9 +25,7 @@
     cpuValue: document.getElementById("cpu-value"),
     gpuValue: document.getElementById("gpu-value"),
     memValue: document.getElementById("mem-value"),
-    memDetail: document.getElementById("mem-detail"),
-    modeLabel: document.getElementById("mode-label"),
-    statusUrl: document.getElementById("status-url")
+    memDetail: document.getElementById("mem-detail")
   };
 
   function withCacheBust(url) {
@@ -103,9 +104,29 @@
     valueEl.textContent = `${value.toFixed(0)}${suffix}`;
   }
 
+  function startRefreshCountdown() {
+    if (state.refreshTimerId) {
+      window.cancelAnimationFrame(state.refreshTimerId);
+    }
+
+    const interval = Number(config.pollIntervalMs || 5000);
+    const tick = function () {
+      const elapsed = Date.now() - state.lastFetchAt;
+      const remainingRatio = Math.max(0, 1 - elapsed / interval);
+      if (els.refreshBar) {
+        els.refreshBar.style.width = `${remainingRatio * 100}%`;
+      }
+      state.refreshTimerId = window.requestAnimationFrame(tick);
+    };
+
+    state.refreshTimerId = window.requestAnimationFrame(tick);
+  }
+
   async function fetchStatus() {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), Number(config.requestTimeoutMs || 5000));
+    state.lastFetchAt = Date.now();
+    startRefreshCountdown();
 
     try {
       const response = await fetch(withCacheBust(config.statusUrl), {
@@ -135,10 +156,8 @@
   }
 
   function startPolling() {
-    els.modeLabel.textContent = `mode: ${config.mode || "unknown"}`;
-    els.statusUrl.textContent = `status: ${config.statusUrl || "-"}`;
     fetchStatus();
-    window.setInterval(fetchStatus, Number(config.pollIntervalMs || 2000));
+    window.setInterval(fetchStatus, Number(config.pollIntervalMs || 5000));
   }
 
   startPolling();
