@@ -3,7 +3,8 @@
   const state = {
     lastGoodData: null,
     lastFetchAt: 0,
-    refreshTimerId: null
+    refreshTimerId: null,
+    theme: "dark"
   };
 
   const els = {
@@ -22,6 +23,7 @@
     connectionText: document.getElementById("connection-text"),
     pollStatus: document.getElementById("poll-status"),
     errorText: document.getElementById("error-text"),
+    themeToggle: document.getElementById("theme-toggle"),
     cpuValue: document.getElementById("cpu-value"),
     gpuValue: document.getElementById("gpu-value"),
     memValue: document.getElementById("mem-value"),
@@ -104,6 +106,27 @@
     valueEl.textContent = `${value.toFixed(0)}${suffix}`;
   }
 
+  function applyTheme(theme) {
+    state.theme = theme === "light" ? "light" : "dark";
+    document.body.setAttribute("data-theme", state.theme);
+    if (els.themeToggle) {
+      els.themeToggle.textContent = state.theme === "dark" ? "☀️ Light" : "🌙 Dark";
+      els.themeToggle.setAttribute("aria-label", state.theme === "dark" ? "切换到浅色主题" : "切换到深色主题");
+    }
+  }
+
+  function initTheme() {
+    const persisted = window.localStorage.getItem("dashboard-theme");
+    applyTheme(persisted || "dark");
+    if (els.themeToggle) {
+      els.themeToggle.addEventListener("click", function () {
+        const nextTheme = state.theme === "dark" ? "light" : "dark";
+        applyTheme(nextTheme);
+        window.localStorage.setItem("dashboard-theme", nextTheme);
+      });
+    }
+  }
+
   function startRefreshCountdown() {
     if (state.refreshTimerId) {
       window.cancelAnimationFrame(state.refreshTimerId);
@@ -160,5 +183,6 @@
     window.setInterval(fetchStatus, Number(config.pollIntervalMs || 5000));
   }
 
+  initTheme();
   startPolling();
 })();
