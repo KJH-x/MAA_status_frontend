@@ -3,7 +3,5 @@ window.DASHBOARD_CONFIG = {
   pollIntervalMs: 2000,
   staleThresholdSec: 30,
   requestTimeoutMs: 5000,
-  showScreenshot: true,
-  showReportImage: true,
-  mode: "r2-dev"
+  mode: "r2-public"
 };

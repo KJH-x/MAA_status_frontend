@@ -18,12 +18,6 @@
     connectionText: document.getElementById("connection-text"),
     pollStatus: document.getElementById("poll-status"),
     errorText: document.getElementById("error-text"),
-    reportImage: document.getElementById("report-image"),
-    reportPlaceholder: document.getElementById("report-placeholder"),
-    screenshotImage: document.getElementById("screenshot-image"),
-    screenshotPlaceholder: document.getElementById("screenshot-placeholder"),
-    reportStatus: document.getElementById("report-status"),
-    screenshotStatus: document.getElementById("screenshot-status"),
     modeLabel: document.getElementById("mode-label"),
     statusUrl: document.getElementById("status-url")
   };
@@ -63,40 +57,6 @@
     els.connectionBadge.textContent = text;
   }
 
-  function normalizeImageUrl(value) {
-    if (!value) {
-      return null;
-    }
-    return new URL(value, config.statusUrl).toString();
-  }
-
-  function renderImage(imageEl, placeholderEl, statusEl, url, idleText) {
-    if (!url) {
-      imageEl.hidden = true;
-      imageEl.removeAttribute("src");
-      placeholderEl.hidden = false;
-      placeholderEl.textContent = idleText;
-      statusEl.textContent = "empty";
-      return;
-    }
-
-    imageEl.onload = function () {
-      imageEl.hidden = false;
-      placeholderEl.hidden = true;
-      statusEl.textContent = "loaded";
-    };
-
-    imageEl.onerror = function () {
-      imageEl.hidden = true;
-      placeholderEl.hidden = false;
-      placeholderEl.textContent = "Image failed to load";
-      statusEl.textContent = "error";
-    };
-
-    imageEl.src = withCacheBust(url);
-    statusEl.textContent = "loading";
-  }
-
   function renderStatus(data) {
     const stale = isStale(data);
     const online = Boolean(data.online) && !stale;
@@ -120,22 +80,6 @@
     els.lastUpdate.textContent = `Last update: ${formatDate(data.last_update)}`;
     els.connectionText.textContent = data.connection || "-";
     els.errorText.textContent = data.last_error || "None";
-
-    renderImage(
-      els.reportImage,
-      els.reportPlaceholder,
-      els.reportStatus,
-      config.showReportImage ? normalizeImageUrl(data.report_image_url) : null,
-      "No report image"
-    );
-
-    renderImage(
-      els.screenshotImage,
-      els.screenshotPlaceholder,
-      els.screenshotStatus,
-      config.showScreenshot ? normalizeImageUrl(data.screenshot_url) : null,
-      "No screenshot"
-    );
   }
 
   async function fetchStatus() {
