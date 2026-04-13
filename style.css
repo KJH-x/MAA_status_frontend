@@ -182,7 +182,7 @@ body {
   margin-bottom: 16px;
   overflow: hidden;
   border-radius: 26px;
-  background: var(--panel-tint);
+  background: #f2f6f2;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
@@ -194,8 +194,8 @@ body {
 
 .user-pane-current {
   z-index: 1;
-  background: linear-gradient(120deg, #5044ea 0%, #625ae7 52%, #7e8ef8 100%);
-  clip-path: polygon(0 0, 100% 0, calc(100% - 28px) 100%, 0 100%);
+  background: linear-gradient(120deg, #4338ca 0%, #5b50e8 45%, #6b6be8 100%);
+  clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 100%, 0 100%);
   padding-right: 42px;
 }
 
