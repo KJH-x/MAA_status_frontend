@@ -112,6 +112,7 @@ body {
 }
 
 .card {
+  min-width: 0;
   background: var(--surface);
   border-radius: 28px;
   border: 1px solid var(--line);
@@ -307,6 +308,8 @@ body {
 }
 
 .progress-scroll {
+  width: 100%;
+  min-width: 0;
   overflow-x: auto;
   padding-bottom: 4px;
 }
@@ -317,7 +320,7 @@ body {
   overflow: hidden;
   min-height: 56px;
   width: 100%;
-  min-width: 400px;
+  min-width: 375px;
   border-radius: 18px;
   background: color-mix(in srgb, #d9c3a0 68%, var(--surface) 32%);
   border: 1px solid rgba(214, 169, 101, 0.42);
@@ -398,6 +401,7 @@ body {
 }
 
 .ring-list {
+  min-width: 0;
   display: grid;
   gap: 18px;
 }
@@ -568,6 +572,10 @@ body[data-theme="light"] .progress-marker::before {
 @media (max-width: 980px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .card-metrics {
+    width: 100%;
   }
 }
 
@@ -749,7 +757,7 @@ body[data-theme="light"] .progress-marker::before {
   }
 
   .progress-track {
-    min-width: 360px;
+    min-width: 340px;
   }
 
   .ring-list {
@@ -836,6 +844,6 @@ body[data-theme="light"] .progress-marker::before {
   }
 
   .progress-track {
-    min-width: 320px;
+    min-width: 300px;
   }
 }
