@@ -191,18 +191,138 @@
     }
   }
 
+  function initCanvasDiscFallback() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      setDiscStatus("Canvas fallback unavailable in this browser.");
+      return;
+    }
+
+    els.discCanvas.innerHTML = "";
+    els.discCanvas.appendChild(canvas);
+
+    const target = { x: 0.5, y: 0.5, hover: 0 };
+    const smooth = { x: 0.5, y: 0.5, hover: 0, vx: 0, vy: 0, ripple: 0 };
+
+    function resizeCanvas() {
+      const rect = els.discCanvas.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+      canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+
+    function onPointerMove(event) {
+      const rect = canvas.getBoundingClientRect();
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = (event.clientY - rect.top) / rect.height;
+      const dx = nx - 0.5;
+      const dy = ny - 0.5;
+      const radius = Math.sqrt(dx * dx + dy * dy);
+      if (radius <= 0.5) {
+        target.x = nx;
+        target.y = ny;
+        target.hover = 1;
+      } else {
+        target.hover = 0;
+      }
+    }
+
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerleave", function () {
+      target.hover = 0;
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    setDiscStatus("Interactive disc active (Canvas fallback mode).");
+
+    let last = performance.now();
+    function draw(now) {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const ease = 1.0 - Math.exp(-dt * 12.0);
+
+      const prevX = smooth.x;
+      const prevY = smooth.y;
+      smooth.x += (target.x - smooth.x) * ease;
+      smooth.y += (target.y - smooth.y) * ease;
+      smooth.hover += (target.hover - smooth.hover) * ease;
+      smooth.vx += ((smooth.x - prevX) / Math.max(dt, 1e-3) - smooth.vx) * (1.0 - Math.exp(-dt * 10.0));
+      smooth.vy += ((smooth.y - prevY) / Math.max(dt, 1e-3) - smooth.vy) * (1.0 - Math.exp(-dt * 10.0));
+      smooth.ripple += Math.sqrt(smooth.vx * smooth.vx + smooth.vy * smooth.vy) * dt;
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const cx = w * 0.5;
+      const cy = h * 0.5;
+      const r = Math.min(w, h) * 0.44;
+      const px = smooth.x * w;
+      const py = smooth.y * h;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.clip();
+
+      const base = ctx.createRadialGradient(cx, cy, r * 0.08, cx, cy, r);
+      base.addColorStop(0, "rgba(72,130,236,0.18)");
+      base.addColorStop(0.55, "rgba(19,40,70,0.92)");
+      base.addColorStop(1, "rgba(8,17,28,0.98)");
+      ctx.fillStyle = base;
+      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+      const sink = ctx.createRadialGradient(px, py, r * 0.2, px, py, r * 1.2);
+      sink.addColorStop(0, `rgba(1,10,20,${0.25 * smooth.hover})`);
+      sink.addColorStop(1, "rgba(1,10,20,0)");
+      ctx.fillStyle = sink;
+      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+      const lift = ctx.createRadialGradient(px, py, 0, px, py, r * 0.78);
+      lift.addColorStop(0, `rgba(150,210,255,${0.42 * smooth.hover})`);
+      lift.addColorStop(0.45, `rgba(87,165,255,${0.18 * smooth.hover})`);
+      lift.addColorStop(1, "rgba(50,110,220,0)");
+      ctx.fillStyle = lift;
+      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+      ctx.strokeStyle = `rgba(135,185,255,${0.22 + 0.18 * smooth.hover})`;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(px, py, r * (0.18 + (Math.sin(smooth.ripple * 0.25) + 1.0) * 0.05), 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
+
+      ctx.strokeStyle = "rgba(154,191,255,0.4)";
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+
+      window.requestAnimationFrame(draw);
+    }
+
+    window.requestAnimationFrame(draw);
+  }
+
   async function initEndfieldDisc() {
     if (!els.discCanvas) {
       return;
     }
 
     if (!window.THREE) {
-      setDiscStatus("Three.js not available.");
+      initCanvasDiscFallback();
       return;
     }
 
     const vertexRes = await fetch("./shaders/disc.vert.glsl");
     const fragmentRes = await fetch("./shaders/disc.frag.glsl");
+    if (!vertexRes.ok || !fragmentRes.ok) {
+      initCanvasDiscFallback();
+      return;
+    }
     const vertexShader = await vertexRes.text();
     const fragmentShader = await fragmentRes.text();
 
@@ -214,6 +334,7 @@
 
     const renderer = new window.THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    els.discCanvas.innerHTML = "";
     els.discCanvas.appendChild(renderer.domElement);
 
     const uniforms = {

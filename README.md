@@ -27,4 +27,5 @@ This project now includes an interactive circular WebGL element built with Three
 - Farther area: subtle negative sink.
 - Optional velocity-driven ripple is added while the cursor moves.
 - Cursor and hover values are interpolated each frame for smooth elastic motion.
+- If Three.js or shader files are unavailable, the UI automatically falls back to a Canvas-based interactive disc so the page still works offline.
 
