@@ -154,15 +154,9 @@ body {
 }
 
 [data-tilt="large"] {
-  --tilt-max-rotate: 5deg;
-  --tilt-max-z: 10px;
-  --tilt-hover-scale: 1.003;
-}
-
-[data-tilt="small"] {
-  --tilt-max-rotate: 9deg;
-  --tilt-max-z: 16px;
-  --tilt-hover-scale: 1.008;
+  --tilt-max-rotate: 10deg;
+  --tilt-max-z: 20px;
+  --tilt-hover-scale: 1.006;
 }
 
 .card:hover,
@@ -171,7 +165,7 @@ body {
 .status-block:hover,
 .ring-card:hover,
 .user-dual-card:hover {
-  --tilt-lift: 4px;
+  --tilt-lift: 8px;
   --tilt-scale: var(--tilt-hover-scale, 1);
   box-shadow: 0 24px 54px rgba(15, 23, 42, 0.16);
   border-color: rgba(79, 70, 229, 0.18);

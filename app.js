@@ -12,12 +12,8 @@
 
   const TILT_CONFIG = {
     large: {
-      maxRotate: 5,
-      maxZ: 10
-    },
-    small: {
-      maxRotate: 9,
-      maxZ: 16
+      maxRotate: 10,
+      maxZ: 20
     }
   };
 
@@ -673,13 +669,6 @@
     element.style.setProperty("--tilt-z", "0px");
   }
 
-  function getTiltTargetFromEvent(event) {
-    if (!event || !(event.target instanceof Element)) {
-      return null;
-    }
-    return event.target.closest("[data-tilt]");
-  }
-
   function applyTiltCardMotion(element, event) {
     const tier = element.getAttribute("data-tilt");
     const configForTier = TILT_CONFIG[tier];
@@ -716,11 +705,6 @@
       resetTiltCard(element);
 
       element.addEventListener("pointermove", function (event) {
-        const activeTiltTarget = getTiltTargetFromEvent(event);
-        if (activeTiltTarget !== element) {
-          resetTiltCard(element);
-          return;
-        }
         applyTiltCardMotion(element, event);
       });
 
