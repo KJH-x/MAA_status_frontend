@@ -13,7 +13,8 @@
   const TILT_CONFIG = {
     large: {
       maxRotate: 10,
-      maxZ: 20
+      maxZ: 20,
+      maxPopout: 12
     }
   };
 
@@ -667,6 +668,7 @@
     element.style.setProperty("--tilt-rotate-x", "0deg");
     element.style.setProperty("--tilt-rotate-y", "0deg");
     element.style.setProperty("--tilt-z", "0px");
+    element.style.setProperty("--tilt-popout", "0px");
   }
 
   function applyTiltCardMotion(element, event) {
@@ -689,10 +691,12 @@
     const rotateY = clampedX * configForTier.maxRotate;
     const rotateX = clampedY * -configForTier.maxRotate;
     const translateZ = intensity * configForTier.maxZ;
+    const popoutZ = intensity * (configForTier.maxPopout || 0);
 
     element.style.setProperty("--tilt-rotate-x", rotateX.toFixed(2) + "deg");
     element.style.setProperty("--tilt-rotate-y", rotateY.toFixed(2) + "deg");
     element.style.setProperty("--tilt-z", translateZ.toFixed(2) + "px");
+    element.style.setProperty("--tilt-popout", popoutZ.toFixed(2) + "px");
   }
 
   function initTiltCards() {
