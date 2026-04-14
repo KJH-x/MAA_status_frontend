@@ -10,6 +10,14 @@
     progressLabelsMode: "auto"
   };
 
+  const TILT_CONFIG = {
+    large: {
+      maxRotate: 10,
+      maxZ: 20,
+      maxPopout: 12
+    }
+  };
+
   const I18N = {
     "zh-CN": {
       heroEyebrow: "MAA OneBot Adapter",
@@ -652,6 +660,74 @@
     setProgressLabelsMode("auto");
   }
 
+  function resetTiltCard(element) {
+    if (!element) {
+      return;
+    }
+
+    element.style.setProperty("--tilt-rotate-x", "0deg");
+    element.style.setProperty("--tilt-rotate-y", "0deg");
+    element.style.setProperty("--tilt-z", "0px");
+    element.style.setProperty("--tilt-popout", "0px");
+  }
+
+  function applyTiltCardMotion(element, event) {
+    const tier = element.getAttribute("data-tilt");
+    const configForTier = TILT_CONFIG[tier];
+    if (!configForTier) {
+      return;
+    }
+
+    const rect = element.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+      return;
+    }
+
+    const xRatio = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const yRatio = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+    const clampedX = Math.max(-1, Math.min(1, xRatio));
+    const clampedY = Math.max(-1, Math.min(1, yRatio));
+    const intensity = Math.max(Math.abs(clampedX), Math.abs(clampedY));
+    const rotateY = clampedX * configForTier.maxRotate;
+    const rotateX = clampedY * -configForTier.maxRotate;
+    const translateZ = intensity * configForTier.maxZ;
+    const popoutZ = intensity * (configForTier.maxPopout || 0);
+
+    element.style.setProperty("--tilt-rotate-x", rotateX.toFixed(2) + "deg");
+    element.style.setProperty("--tilt-rotate-y", rotateY.toFixed(2) + "deg");
+    element.style.setProperty("--tilt-z", translateZ.toFixed(2) + "px");
+    element.style.setProperty("--tilt-popout", popoutZ.toFixed(2) + "px");
+  }
+
+  function initTiltCards() {
+    if (!window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)").matches) {
+      return;
+    }
+
+    const tiltCards = document.querySelectorAll("[data-tilt]");
+    tiltCards.forEach(function (element) {
+      resetTiltCard(element);
+
+      element.addEventListener("pointermove", function (event) {
+        applyTiltCardMotion(element, event);
+      });
+
+      element.addEventListener("pointerleave", function () {
+        resetTiltCard(element);
+      });
+
+      element.addEventListener("blur", function () {
+        resetTiltCard(element);
+      });
+    });
+
+    window.addEventListener("blur", function () {
+      tiltCards.forEach(function (element) {
+        resetTiltCard(element);
+      });
+    });
+  }
+
   function renderStatus(data) {
     const telemetry = data.telemetry || {};
     const mem = telemetry.mem || {};
@@ -789,5 +865,6 @@
   applyLocalization();
   initTheme();
   initProgressInteractions();
+  initTiltCards();
   startPolling();
 })();
