@@ -181,22 +181,18 @@
     if (els.controllerStateCompact) {
       els.controllerStateCompact.textContent = data.controller_state || "-";
     }
-
     els.maaStatus.textContent = data.maa_status || "-";
     if (els.maaStatusCompact) {
       els.maaStatusCompact.textContent = data.maa_status || "-";
     }
-
     els.currentUser.textContent = data.current_user || "-";
     els.nextUser.textContent = getDisplayNextUser(data, executionConfigs);
     if (els.nextUserNote) {
       els.nextUserNote.textContent = getNextUserNote(data);
     }
-
     els.progressText.textContent = `${data.step || 0} / ${data.total_steps || 0}`;
     els.progressPercent.textContent = `${Number(data.progress_percent || 0).toFixed(0)}%`;
     renderProgressTimeline(executionConfigs, data.progress_percent);
-
     els.lastUpdate.textContent = `Last update: ${formatDate(data.last_update)}`;
     els.lastUpdateChip.textContent = `Last update: ${formatDate(data.last_update)}`;
 
@@ -204,12 +200,10 @@
     if (els.connectionTextCompact) {
       els.connectionTextCompact.textContent = data.connection || "-";
     }
-
     els.errorText.textContent = data.last_error || "None";
     if (els.errorTextCompact) {
       els.errorTextCompact.textContent = data.last_error || "None";
     }
-
     renderRing(document.querySelector(".cpu-ring"), els.cpuValue, telemetry.cpu, "%");
     renderRing(document.querySelector(".gpu-ring"), els.gpuValue, telemetry.gpu, "%");
     renderRing(document.querySelector(".mem-ring"), els.memValue, mem.percent, "%");
