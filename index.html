@@ -14,9 +14,9 @@
   <div class="page-shell">
     <header class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">MAA OneBot Adapter</p>
-        <h1>Runtime Dashboard</h1>
-        <p class="hero-subtitle">运行状态、执行进度与系统遥测</p>
+        <p id="hero-eyebrow" class="eyebrow">MAA OneBot Adapter</p>
+        <h1 id="hero-title">Runtime Dashboard</h1>
+        <p id="hero-subtitle" class="hero-subtitle">运行状态、执行进度与系统遥测</p>
       </div>
       <div class="hero-meta">
         <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换主题">☀️ Light</button>
@@ -29,20 +29,20 @@
       <section class="card card-main">
         <div class="section-head">
           <div>
-            <p class="section-kicker">Main Runtime</p>
-            <h2>Execution Status</h2>
+            <p id="main-kicker" class="section-kicker">Main Runtime</p>
+            <h2 id="main-title">Execution Status</h2>
           </div>
           <span id="last-update-chip" class="meta-chip">Last update: -</span>
         </div>
 
         <article id="user-card" class="user-dual-card">
           <div id="current-user-pane" class="user-pane user-pane-current">
-            <span class="stat-label stat-label-light">Current User</span>
+            <span id="current-user-label" class="stat-label stat-label-light">Current User</span>
             <strong id="current-user" class="stat-hero stat-hero-light">-</strong>
             <span id="current-user-note" class="stat-note stat-note-light">当前执行账号 / Session</span>
           </div>
           <div id="next-user-pane" class="user-pane user-pane-next">
-            <span class="stat-label">Next User</span>
+            <span id="next-user-label" class="stat-label">Next User</span>
             <strong id="next-user" class="next-user-value">-</strong>
             <span id="next-user-note" class="stat-note">即将执行</span>
           </div>
@@ -51,7 +51,7 @@
         <section class="progress-panel">
           <div class="progress-header">
             <div>
-              <p class="section-kicker">Task Progress</p>
+              <p id="progress-kicker" class="section-kicker">Task Progress</p>
               <strong id="progress-text">0 / 0</strong>
               <p id="last-update" class="hero-subtitle">Last update: -</p>
             </div>
@@ -59,8 +59,10 @@
           </div>
           <div class="progress-scroll">
             <div id="progress-track" class="progress-track" tabindex="0" role="button" aria-pressed="false" aria-label="悬浮或点击以查看配置名称">
-              <div id="progress-bar" class="progress-bar"></div>
-              <div id="progress-segments" class="progress-segments"></div>
+              <div class="progress-clip">
+                <div id="progress-bar" class="progress-bar"></div>
+                <div id="progress-segments" class="progress-segments"></div>
+              </div>
               <div id="progress-marker" class="progress-marker" aria-hidden="true"></div>
             </div>
           </div>
@@ -68,52 +70,52 @@
 
         <section class="status-strip" aria-label="Compact Runtime Status">
           <article class="status-pill">
-            <span class="stat-label">Controller</span>
+            <span id="controller-label-compact" class="stat-label">Controller</span>
             <strong id="controller-state-compact">-</strong>
           </article>
           <article class="status-pill">
-            <span class="stat-label">MAA</span>
+            <span id="maa-label-compact" class="stat-label">MAA</span>
             <strong id="maa-status-compact">-</strong>
           </article>
           <article class="status-pill">
-            <span class="stat-label">Conn</span>
+            <span id="connection-label-compact" class="stat-label">Conn</span>
             <strong id="connection-text-compact">-</strong>
           </article>
           <article class="status-pill">
-            <span class="stat-label">Polling</span>
+            <span id="polling-label-compact" class="stat-label">Polling</span>
             <strong id="poll-status-compact">Initializing</strong>
           </article>
           <article class="status-pill status-pill-error">
-            <span class="stat-label">Error</span>
+            <span id="error-label-compact" class="stat-label">Error</span>
             <strong id="error-text-compact">None</strong>
           </article>
         </section>
 
         <div class="status-grid status-grid-main">
           <article class="status-block">
-            <span class="stat-label">Controller</span>
+            <span id="controller-label" class="stat-label">Controller</span>
             <strong id="controller-state">-</strong>
           </article>
 
           <article class="status-block">
-            <span class="stat-label">MAA Status</span>
+            <span id="maa-status-label" class="stat-label">MAA Status</span>
             <strong id="maa-status">-</strong>
           </article>
 
           <article class="status-block">
-            <span class="stat-label">Connection</span>
+            <span id="connection-label" class="stat-label">Connection</span>
             <strong id="connection-text">-</strong>
           </article>
 
           <article class="status-block">
-            <span class="stat-label">Polling</span>
+            <span id="polling-label" class="stat-label">Polling</span>
             <strong id="poll-status">Initializing</strong>
           </article>
         </div>
 
         <section class="meta-grid">
           <article class="status-block meta-error">
-            <span class="stat-label">Error</span>
+            <span id="error-label" class="stat-label">Error</span>
             <strong id="error-text">None</strong>
           </article>
         </section>
@@ -122,8 +124,8 @@
       <section class="card card-metrics">
         <div class="section-head section-head-compact">
           <div>
-            <p class="section-kicker">System Monitor</p>
-            <h2>Telemetry</h2>
+            <p id="telemetry-kicker" class="section-kicker">System Monitor</p>
+            <h2 id="telemetry-title">Telemetry</h2>
           </div>
         </div>
 
@@ -135,8 +137,8 @@
               </div>
             </div>
             <div class="ring-copy">
-              <strong>CPU</strong>
-              <span>Processor Usage</span>
+              <strong id="cpu-label">CPU</strong>
+              <span id="cpu-note">Processor Usage</span>
             </div>
           </article>
 
@@ -147,8 +149,8 @@
               </div>
             </div>
             <div class="ring-copy">
-              <strong>GPU</strong>
-              <span>Graphics Usage</span>
+              <strong id="gpu-label">GPU</strong>
+              <span id="gpu-note">Graphics Usage</span>
             </div>
           </article>
 
@@ -159,7 +161,7 @@
               </div>
             </div>
             <div class="ring-copy">
-              <strong>Memory</strong>
+              <strong id="memory-label">Memory</strong>
               <span id="mem-detail">0 / 0 GB</span>
             </div>
           </article>

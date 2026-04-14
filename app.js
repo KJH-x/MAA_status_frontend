@@ -3,9 +3,246 @@
   const state = {
     lastGoodData: null,
     lastFetchAt: 0,
+    lastRenderedLastUpdate: 0,
     refreshTimerId: null,
     theme: "dark",
-    progressLabelsPinned: false
+    locale: "zh-CN",
+    progressLabelsMode: "auto"
+  };
+
+  const I18N = {
+    "zh-CN": {
+      heroEyebrow: "MAA OneBot Adapter",
+      heroTitle: "运行仪表盘",
+      heroSubtitle: "运行状态、执行进度与系统遥测",
+      mainKicker: "核心运行态",
+      mainTitle: "执行状态",
+      currentUserLabel: "当前用户",
+      nextUserLabel: "下一用户",
+      progressKicker: "任务进度",
+      controllerLabel: "控制器",
+      maaStatusLabel: "MAA 状态",
+      connectionLabel: "连接",
+      pollingLabel: "拉取状态",
+      errorLabel: "错误",
+      telemetryKicker: "系统监控",
+      telemetryTitle: "遥测",
+      cpuLabel: "CPU",
+      cpuNote: "处理器占用",
+      gpuLabel: "GPU",
+      gpuNote: "图形占用",
+      memoryLabel: "内存",
+      sourceLabel: "来源：{value}",
+      pending: "等待中",
+      none: "无",
+      currentUserDone: "全部完成",
+      currentUserNoteRunning: "当前执行账号 / Session",
+      currentUserNoteCompleted: "本轮任务已全部完成",
+      nextUserNoteCompleted: "已全部完成",
+      nextUserNoteNotStarted: "下一位待执行",
+      nextUserNoteFailed: "执行失败后停止",
+      nextUserNoteStopped: "已手动停止",
+      nextUserNoteRunning: "即将执行",
+      progressPlaceholder: "暂无执行配置",
+      progressTrackAria: "悬浮或点击以查看配置名称",
+      pollInitializing: "初始化中",
+      pollUpdated: "已更新",
+      pollFetchFailed: "拉取失败",
+      pollFetchFailedDetail: "拉取失败：{message}",
+      statusConnecting: "连接中",
+      statusOnline: "在线",
+      statusOffline: "离线",
+      statusUnavailable: "不可用",
+      lastUpdatePrefix: "上次更新：",
+      lastUpdateLabel: "上次更新：{value}",
+      timeJustNow: "刚刚",
+      timeSecondsSuffix: "秒前",
+      timeMinutesSuffix: "分钟前",
+      timeHoursSuffix: "小时前",
+      timeDaysSuffix: "天前",
+      timeSecondsAgo: "{count}秒前",
+      timeMinutesAgo: "{count}分钟前",
+      timeHoursAgo: "{count}小时前",
+      timeDaysAgo: "{count}天前",
+      themeLight: "浅色",
+      themeDark: "深色",
+      themeLightAria: "切换到浅色主题",
+      themeDarkAria: "切换到深色主题"
+    },
+    en: {
+      heroEyebrow: "MAA OneBot Adapter",
+      heroTitle: "Runtime Dashboard",
+      heroSubtitle: "Runtime status, execution progress, and system telemetry",
+      mainKicker: "Main Runtime",
+      mainTitle: "Execution Status",
+      currentUserLabel: "Current User",
+      nextUserLabel: "Next User",
+      progressKicker: "Task Progress",
+      controllerLabel: "Controller",
+      maaStatusLabel: "MAA Status",
+      connectionLabel: "Connection",
+      pollingLabel: "Polling",
+      errorLabel: "Error",
+      telemetryKicker: "System Monitor",
+      telemetryTitle: "Telemetry",
+      cpuLabel: "CPU",
+      cpuNote: "Processor Usage",
+      gpuLabel: "GPU",
+      gpuNote: "Graphics Usage",
+      memoryLabel: "Memory",
+      sourceLabel: "Source: {value}",
+      pending: "pending",
+      none: "None",
+      currentUserDone: "All Complete",
+      currentUserNoteRunning: "Current account / session",
+      currentUserNoteCompleted: "This run has fully completed",
+      nextUserNoteCompleted: "All completed",
+      nextUserNoteNotStarted: "Next in queue",
+      nextUserNoteFailed: "Stopped after failure",
+      nextUserNoteStopped: "Stopped manually",
+      nextUserNoteRunning: "Up next",
+      progressPlaceholder: "No queued configs",
+      progressTrackAria: "Hover or click to show config names",
+      pollInitializing: "Initializing",
+      pollUpdated: "Updated",
+      pollFetchFailed: "Fetch failed",
+      pollFetchFailedDetail: "Fetch failed: {message}",
+      statusConnecting: "Connecting",
+      statusOnline: "Online",
+      statusOffline: "Offline",
+      statusUnavailable: "Unavailable",
+      lastUpdatePrefix: "Last update: ",
+      lastUpdateLabel: "Last update: {value}",
+      timeJustNow: "just now",
+      timeSecondsSuffix: "s ago",
+      timeMinutesSuffix: "m ago",
+      timeHoursSuffix: "h ago",
+      timeDaysSuffix: "d ago",
+      timeSecondsAgo: "{count}s ago",
+      timeMinutesAgo: "{count}m ago",
+      timeHoursAgo: "{count}h ago",
+      timeDaysAgo: "{count}d ago",
+      themeLight: "Light",
+      themeDark: "Dark",
+      themeLightAria: "Switch to light theme",
+      themeDarkAria: "Switch to dark theme"
+    },
+    "zh-TW": {
+      heroEyebrow: "MAA OneBot Adapter",
+      heroTitle: "執行儀表板",
+      heroSubtitle: "執行狀態、進度與系統遙測",
+      mainKicker: "核心執行態",
+      mainTitle: "執行狀態",
+      currentUserLabel: "目前使用者",
+      nextUserLabel: "下一位使用者",
+      progressKicker: "任務進度",
+      controllerLabel: "控制器",
+      maaStatusLabel: "MAA 狀態",
+      connectionLabel: "連線",
+      pollingLabel: "輪詢狀態",
+      errorLabel: "錯誤",
+      telemetryKicker: "系統監控",
+      telemetryTitle: "遙測",
+      cpuLabel: "CPU",
+      cpuNote: "處理器使用率",
+      gpuLabel: "GPU",
+      gpuNote: "圖形使用率",
+      memoryLabel: "記憶體",
+      sourceLabel: "來源：{value}",
+      pending: "等待中",
+      none: "無",
+      currentUserDone: "全部完成",
+      currentUserNoteRunning: "目前執行帳號 / Session",
+      currentUserNoteCompleted: "本輪任務已全部完成",
+      nextUserNoteCompleted: "已全部完成",
+      nextUserNoteNotStarted: "下一位待執行",
+      nextUserNoteFailed: "失敗後停止",
+      nextUserNoteStopped: "已手動停止",
+      nextUserNoteRunning: "即將執行",
+      progressPlaceholder: "暫無執行設定",
+      progressTrackAria: "懸浮或點擊以顯示設定名稱",
+      pollInitializing: "初始化中",
+      pollUpdated: "已更新",
+      pollFetchFailed: "取得失敗",
+      pollFetchFailedDetail: "取得失敗：{message}",
+      statusConnecting: "連線中",
+      statusOnline: "在線",
+      statusOffline: "離線",
+      statusUnavailable: "不可用",
+      lastUpdatePrefix: "上次更新：",
+      lastUpdateLabel: "上次更新：{value}",
+      timeJustNow: "剛剛",
+      timeSecondsSuffix: "秒前",
+      timeMinutesSuffix: "分鐘前",
+      timeHoursSuffix: "小時前",
+      timeDaysSuffix: "天前",
+      timeSecondsAgo: "{count}秒前",
+      timeMinutesAgo: "{count}分鐘前",
+      timeHoursAgo: "{count}小時前",
+      timeDaysAgo: "{count}天前",
+      themeLight: "淺色",
+      themeDark: "深色",
+      themeLightAria: "切換到淺色主題",
+      themeDarkAria: "切換到深色主題"
+    },
+    ja: {
+      heroEyebrow: "MAA OneBot Adapter",
+      heroTitle: "ランタイムダッシュボード",
+      heroSubtitle: "実行状態、進行状況、システムテレメトリ",
+      mainKicker: "メインランタイム",
+      mainTitle: "実行ステータス",
+      currentUserLabel: "現在のユーザー",
+      nextUserLabel: "次のユーザー",
+      progressKicker: "進行状況",
+      controllerLabel: "コントローラー",
+      maaStatusLabel: "MAA ステータス",
+      connectionLabel: "接続",
+      pollingLabel: "取得状態",
+      errorLabel: "エラー",
+      telemetryKicker: "システムモニター",
+      telemetryTitle: "テレメトリ",
+      cpuLabel: "CPU",
+      cpuNote: "プロセッサ使用率",
+      gpuLabel: "GPU",
+      gpuNote: "グラフィックス使用率",
+      memoryLabel: "メモリ",
+      sourceLabel: "ソース: {value}",
+      pending: "待機中",
+      none: "なし",
+      currentUserDone: "すべて完了",
+      currentUserNoteRunning: "現在実行中のアカウント / セッション",
+      currentUserNoteCompleted: "今回の実行はすべて完了しました",
+      nextUserNoteCompleted: "すべて完了",
+      nextUserNoteNotStarted: "次に実行予定",
+      nextUserNoteFailed: "失敗後に停止",
+      nextUserNoteStopped: "手動で停止",
+      nextUserNoteRunning: "次に実行",
+      progressPlaceholder: "実行予定の設定はありません",
+      progressTrackAria: "ホバーまたはクリックで設定名を表示",
+      pollInitializing: "初期化中",
+      pollUpdated: "更新済み",
+      pollFetchFailed: "取得失敗",
+      pollFetchFailedDetail: "取得失敗: {message}",
+      statusConnecting: "接続中",
+      statusOnline: "オンライン",
+      statusOffline: "オフライン",
+      statusUnavailable: "利用不可",
+      lastUpdatePrefix: "最終更新: ",
+      lastUpdateLabel: "最終更新: {value}",
+      timeJustNow: "たった今",
+      timeSecondsSuffix: "秒前",
+      timeMinutesSuffix: "分前",
+      timeHoursSuffix: "時間前",
+      timeDaysSuffix: "日前",
+      timeSecondsAgo: "{count}秒前",
+      timeMinutesAgo: "{count}分前",
+      timeHoursAgo: "{count}時間前",
+      timeDaysAgo: "{count}日前",
+      themeLight: "ライト",
+      themeDark: "ダーク",
+      themeLightAria: "ライトテーマに切り替え",
+      themeDarkAria: "ダークテーマに切り替え"
+    }
   };
 
   const els = {
@@ -13,10 +250,22 @@
     connectionBadge: document.getElementById("connection-badge"),
     sourceLabel: document.getElementById("source-label"),
     lastUpdateChip: document.getElementById("last-update-chip"),
+    heroEyebrow: document.getElementById("hero-eyebrow"),
+    heroTitle: document.getElementById("hero-title"),
+    heroSubtitle: document.getElementById("hero-subtitle"),
+    mainKicker: document.getElementById("main-kicker"),
+    mainTitle: document.getElementById("main-title"),
+    currentUserLabel: document.getElementById("current-user-label"),
+    nextUserLabel: document.getElementById("next-user-label"),
+    progressKicker: document.getElementById("progress-kicker"),
     controllerState: document.getElementById("controller-state"),
     controllerStateCompact: document.getElementById("controller-state-compact"),
+    controllerLabel: document.getElementById("controller-label"),
+    controllerLabelCompact: document.getElementById("controller-label-compact"),
     maaStatus: document.getElementById("maa-status"),
     maaStatusCompact: document.getElementById("maa-status-compact"),
+    maaStatusLabel: document.getElementById("maa-status-label"),
+    maaLabelCompact: document.getElementById("maa-label-compact"),
     userCard: document.getElementById("user-card"),
     currentUserPane: document.getElementById("current-user-pane"),
     nextUserPane: document.getElementById("next-user-pane"),
@@ -33,16 +282,124 @@
     lastUpdate: document.getElementById("last-update"),
     connectionText: document.getElementById("connection-text"),
     connectionTextCompact: document.getElementById("connection-text-compact"),
+    connectionLabel: document.getElementById("connection-label"),
+    connectionLabelCompact: document.getElementById("connection-label-compact"),
     pollStatus: document.getElementById("poll-status"),
     pollStatusCompact: document.getElementById("poll-status-compact"),
+    pollingLabel: document.getElementById("polling-label"),
+    pollingLabelCompact: document.getElementById("polling-label-compact"),
     errorText: document.getElementById("error-text"),
     errorTextCompact: document.getElementById("error-text-compact"),
+    errorLabel: document.getElementById("error-label"),
+    errorLabelCompact: document.getElementById("error-label-compact"),
     themeToggle: document.getElementById("theme-toggle"),
+    telemetryKicker: document.getElementById("telemetry-kicker"),
+    telemetryTitle: document.getElementById("telemetry-title"),
+    cpuLabel: document.getElementById("cpu-label"),
+    cpuNote: document.getElementById("cpu-note"),
+    gpuLabel: document.getElementById("gpu-label"),
+    gpuNote: document.getElementById("gpu-note"),
+    memoryLabel: document.getElementById("memory-label"),
     cpuValue: document.getElementById("cpu-value"),
     gpuValue: document.getElementById("gpu-value"),
     memValue: document.getElementById("mem-value"),
     memDetail: document.getElementById("mem-detail")
   };
+
+  function detectLocale() {
+    const languages = Array.isArray(window.navigator.languages) && window.navigator.languages.length
+      ? window.navigator.languages
+      : [window.navigator.language || "en"];
+
+    for (let index = 0; index < languages.length; index += 1) {
+      const raw = String(languages[index] || "").toLowerCase();
+      if (raw.startsWith("zh-tw") || raw.startsWith("zh-hk") || raw.startsWith("zh-mo")) {
+        return "zh-TW";
+      }
+      if (raw.startsWith("zh")) {
+        return "zh-CN";
+      }
+      if (raw.startsWith("ja")) {
+        return "ja";
+      }
+      if (raw.startsWith("en")) {
+        return "en";
+      }
+    }
+
+    return "en";
+  }
+
+  function t(key, vars) {
+    const localePack = I18N[state.locale] || I18N.en;
+    const fallbackPack = I18N.en;
+    let template = localePack[key];
+    if (template == null) {
+      template = fallbackPack[key];
+    }
+    if (template == null) {
+      return key;
+    }
+    if (!vars) {
+      return template;
+    }
+    return String(template).replace(/\{(\w+)\}/g, function (_, name) {
+      return vars[name] == null ? "" : String(vars[name]);
+    });
+  }
+
+  function setTextContent(element, value) {
+    if (element) {
+      element.textContent = value;
+    }
+  }
+
+  function applyLocalization() {
+    document.documentElement.lang = state.locale;
+
+    setTextContent(els.heroEyebrow, t("heroEyebrow"));
+    setTextContent(els.heroTitle, t("heroTitle"));
+    setTextContent(els.heroSubtitle, t("heroSubtitle"));
+    setTextContent(els.mainKicker, t("mainKicker"));
+    setTextContent(els.mainTitle, t("mainTitle"));
+    setTextContent(els.currentUserLabel, t("currentUserLabel"));
+    setTextContent(els.nextUserLabel, t("nextUserLabel"));
+    setTextContent(els.progressKicker, t("progressKicker"));
+    setTextContent(els.controllerLabel, t("controllerLabel"));
+    setTextContent(els.controllerLabelCompact, t("controllerLabel"));
+    setTextContent(els.maaStatusLabel, t("maaStatusLabel"));
+    setTextContent(els.maaLabelCompact, "MAA");
+    setTextContent(els.connectionLabel, t("connectionLabel"));
+    setTextContent(els.connectionLabelCompact, t("connectionLabel"));
+    setTextContent(els.pollingLabel, t("pollingLabel"));
+    setTextContent(els.pollingLabelCompact, t("pollingLabel"));
+    setTextContent(els.errorLabel, t("errorLabel"));
+    setTextContent(els.errorLabelCompact, t("errorLabel"));
+    setTextContent(els.telemetryKicker, t("telemetryKicker"));
+    setTextContent(els.telemetryTitle, t("telemetryTitle"));
+    setTextContent(els.cpuLabel, t("cpuLabel"));
+    setTextContent(els.cpuNote, t("cpuNote"));
+    setTextContent(els.gpuLabel, t("gpuLabel"));
+    setTextContent(els.gpuNote, t("gpuNote"));
+    setTextContent(els.memoryLabel, t("memoryLabel"));
+
+    if (els.progressTrack) {
+      els.progressTrack.setAttribute("aria-label", t("progressTrackAria"));
+    }
+
+    setTextContent(els.sourceLabel, t("sourceLabel", { value: t("pending") }));
+    if (!state.lastGoodData) {
+      setBadge("neutral", t("statusConnecting"));
+      setTextContent(els.pollStatus, t("pollInitializing"));
+      setTextContent(els.pollStatusCompact, t("pollInitializing"));
+      setTextContent(els.currentUserNote, t("currentUserNoteRunning"));
+      setTextContent(els.nextUserNote, t("nextUserNoteRunning"));
+      setTextContent(els.errorText, t("none"));
+      setTextContent(els.errorTextCompact, t("none"));
+    }
+    updateLastUpdateDisplay(state.lastRenderedLastUpdate);
+    applyTheme(state.theme);
+  }
 
   function withCacheBust(url) {
     const u = new URL(url, window.location.href);
@@ -50,19 +407,72 @@
     return u.toString();
   }
 
-  function formatDate(seconds) {
+  function formatAbsoluteDate(seconds) {
     if (!seconds) {
       return "-";
     }
     return new Date(seconds * 1000).toLocaleString();
   }
 
-  function isStale(data) {
-    if (!data || !data.last_update) {
-      return true;
+  function getRelativeTimeParts(seconds) {
+    if (!seconds) {
+      return { text: "-" };
     }
-    const age = Date.now() / 1000 - Number(data.last_update);
-    return age > Number(config.staleThresholdSec || 30);
+
+    const ageSeconds = Math.max(0, Math.floor(Date.now() / 1000 - Number(seconds)));
+    if (ageSeconds < 5) {
+      return { text: t("timeJustNow") };
+    }
+    if (ageSeconds < 60) {
+      return { count: ageSeconds, suffix: t("timeSecondsSuffix") };
+    }
+    if (ageSeconds < 3600) {
+      return { count: Math.floor(ageSeconds / 60), suffix: t("timeMinutesSuffix") };
+    }
+    if (ageSeconds < 86400) {
+      return { count: Math.floor(ageSeconds / 3600), suffix: t("timeHoursSuffix") };
+    }
+    return { count: Math.floor(ageSeconds / 86400), suffix: t("timeDaysSuffix") };
+  }
+
+  function formatRelativeDate(seconds) {
+    const parts = getRelativeTimeParts(seconds);
+    if (parts.count == null) {
+      return parts.text;
+    }
+    return String(parts.count) + parts.suffix;
+  }
+
+  function renderLastUpdateElement(element, parts, absoluteText, plainLabel) {
+    if (!element) {
+      return;
+    }
+
+    element.replaceChildren();
+    element.appendChild(document.createTextNode(t("lastUpdatePrefix")));
+
+    if (parts.count == null) {
+      element.appendChild(document.createTextNode(parts.text));
+    } else {
+      const count = document.createElement("span");
+      count.className = "last-update-count";
+      count.textContent = String(parts.count);
+      element.appendChild(count);
+      element.appendChild(document.createTextNode(parts.suffix));
+    }
+
+    element.title = absoluteText !== "-" ? absoluteText : "";
+    element.setAttribute("aria-label", plainLabel);
+  }
+
+  function updateLastUpdateDisplay(seconds) {
+    const parts = getRelativeTimeParts(seconds);
+    const relativeText = parts.count == null ? parts.text : String(parts.count) + parts.suffix;
+    const absoluteText = formatAbsoluteDate(seconds);
+    const label = t("lastUpdateLabel", { value: relativeText });
+
+    renderLastUpdateElement(els.lastUpdate, parts, absoluteText, label);
+    renderLastUpdateElement(els.lastUpdateChip, parts, absoluteText, label);
   }
 
   function setBadge(kind, text) {
@@ -119,7 +529,7 @@
   function getDisplayCurrentUser(data) {
     const progressPhase = String(data.progress_phase || "").trim();
     if (progressPhase === "completed") {
-      return "全部完成";
+      return t("currentUserDone");
     }
     return String(data.current_user || "").trim() || "-";
   }
@@ -127,26 +537,26 @@
   function getCurrentUserNote(data) {
     const progressPhase = String(data.progress_phase || "").trim();
     if (progressPhase === "completed") {
-      return "本轮任务已全部完成";
+      return t("currentUserNoteCompleted");
     }
-    return "当前执行账号 / Session";
+    return t("currentUserNoteRunning");
   }
 
   function getNextUserNote(data) {
     const progressPhase = String(data.progress_phase || "").trim();
     if (progressPhase === "completed") {
-      return "已全部完成";
+      return t("nextUserNoteCompleted");
     }
     if (progressPhase === "not_started") {
-      return "下一位待执行";
+      return t("nextUserNoteNotStarted");
     }
     if (progressPhase === "failed") {
-      return "执行失败后停止";
+      return t("nextUserNoteFailed");
     }
     if (progressPhase === "stopped") {
-      return "已手动停止";
+      return t("nextUserNoteStopped");
     }
-    return "即将执行";
+    return t("nextUserNoteRunning");
   }
 
   function updateUserCardState(data, displayNextUser) {
@@ -169,12 +579,11 @@
     }
 
     const hasConfigs = executionConfigs.length > 0;
-    const labels = hasConfigs ? executionConfigs : ["No queued configs"];
+    const labels = hasConfigs ? executionConfigs : [t("progressPlaceholder")];
     const segmentCount = labels.length;
     const clampedPercent = Math.max(0, Math.min(100, Number(progressPercent || 0)));
 
     els.progressTrack.style.setProperty("--segment-count", String(segmentCount));
-    els.progressTrack.style.minWidth = Math.max(375, segmentCount * 76) + "px";
     els.progressTrack.classList.toggle("is-placeholder", !hasConfigs);
     els.progressSegments.replaceChildren();
 
@@ -201,19 +610,20 @@
     els.progressMarker.style.left = clampedPercent + "%";
   }
 
-  function toggleProgressLabels(forceValue) {
+  function setProgressLabelsMode(mode) {
     if (!els.progressTrack) {
       return;
     }
 
-    if (typeof forceValue === "boolean") {
-      state.progressLabelsPinned = forceValue;
-    } else {
-      state.progressLabelsPinned = !state.progressLabelsPinned;
-    }
+    state.progressLabelsMode = mode;
+    els.progressTrack.classList.toggle("show-labels", mode === "show");
+    els.progressTrack.classList.toggle("hide-labels", mode === "hide");
+    els.progressTrack.setAttribute("aria-pressed", mode === "show" ? "true" : "false");
+  }
 
-    els.progressTrack.classList.toggle("show-labels", state.progressLabelsPinned);
-    els.progressTrack.setAttribute("aria-pressed", state.progressLabelsPinned ? "true" : "false");
+  function toggleProgressLabels() {
+    const nextMode = state.progressLabelsMode === "show" ? "hide" : "show";
+    setProgressLabelsMode(nextMode);
   }
 
   function initProgressInteractions() {
@@ -232,29 +642,28 @@
       }
       if (event.key === "Escape") {
         event.preventDefault();
-        toggleProgressLabels(false);
+        setProgressLabelsMode("auto");
       }
     });
 
-    toggleProgressLabels(false);
+    setProgressLabelsMode("auto");
   }
 
   function renderStatus(data) {
-    const stale = isStale(data);
-    const online = Boolean(data.online) && !stale;
+    const online = Boolean(data.online);
     const telemetry = data.telemetry || {};
     const mem = telemetry.mem || {};
     const executionConfigs = getExecutionConfigs(data);
 
     if (online) {
-      setBadge("ok", "Online");
+      setBadge("ok", t("statusOnline"));
     } else if (data.last_update) {
-      setBadge("warn", "Stale");
+      setBadge("warn", t("statusOffline"));
     } else {
-      setBadge("error", "Offline");
+      setBadge("error", t("statusOffline"));
     }
 
-    els.sourceLabel.textContent = `source: ${data.source || "-"}`;
+    els.sourceLabel.textContent = t("sourceLabel", { value: data.source || "-" });
     els.controllerState.textContent = data.controller_state || "-";
     if (els.controllerStateCompact) {
       els.controllerStateCompact.textContent = data.controller_state || "-";
@@ -276,16 +685,16 @@
     els.progressText.textContent = `${data.step || 0} / ${data.total_steps || 0}`;
     els.progressPercent.textContent = `${Number(data.progress_percent || 0).toFixed(0)}%`;
     renderProgressTimeline(executionConfigs, data.progress_percent);
-    els.lastUpdate.textContent = `Last update: ${formatDate(data.last_update)}`;
-    els.lastUpdateChip.textContent = `Last update: ${formatDate(data.last_update)}`;
+    state.lastRenderedLastUpdate = Number(data.last_update || 0);
+    updateLastUpdateDisplay(state.lastRenderedLastUpdate);
 
     els.connectionText.textContent = data.connection || "-";
     if (els.connectionTextCompact) {
       els.connectionTextCompact.textContent = data.connection || "-";
     }
-    els.errorText.textContent = data.last_error || "None";
+    els.errorText.textContent = data.last_error || t("none");
     if (els.errorTextCompact) {
-      els.errorTextCompact.textContent = data.last_error || "None";
+      els.errorTextCompact.textContent = data.last_error || t("none");
     }
     renderRing(document.querySelector(".cpu-ring"), els.cpuValue, telemetry.cpu, "%");
     renderRing(document.querySelector(".gpu-ring"), els.gpuValue, telemetry.gpu, "%");
@@ -306,8 +715,8 @@
     state.theme = theme === "light" ? "light" : "dark";
     document.body.setAttribute("data-theme", state.theme);
     if (els.themeToggle) {
-      els.themeToggle.textContent = state.theme === "dark" ? "☀️ Light" : "🌙 Dark";
-      els.themeToggle.setAttribute("aria-label", state.theme === "dark" ? "切换到浅色主题" : "切换到深色主题");
+      els.themeToggle.textContent = state.theme === "dark" ? t("themeLight") : t("themeDark");
+      els.themeToggle.setAttribute("aria-label", state.theme === "dark" ? t("themeLightAria") : t("themeDarkAria"));
     }
   }
 
@@ -335,6 +744,7 @@
       if (els.refreshBar) {
         els.refreshBar.style.width = `${remainingRatio * 100}%`;
       }
+      updateLastUpdateDisplay(state.lastRenderedLastUpdate);
       state.refreshTimerId = window.requestAnimationFrame(tick);
     };
 
@@ -360,21 +770,20 @@
 
       const data = await response.json();
       state.lastGoodData = data;
-      els.pollStatus.textContent = "Updated";
+      els.pollStatus.textContent = t("pollUpdated");
       if (els.pollStatusCompact) {
-        els.pollStatusCompact.textContent = "Updated";
+        els.pollStatusCompact.textContent = t("pollUpdated");
       }
       renderStatus(data);
     } catch (error) {
-      els.pollStatus.textContent = `Fetch failed: ${error.message}`;
+      els.pollStatus.textContent = t("pollFetchFailedDetail", { message: error.message });
       if (els.pollStatusCompact) {
-        els.pollStatusCompact.textContent = "Fetch failed";
+        els.pollStatusCompact.textContent = t("pollFetchFailed");
       }
       if (state.lastGoodData) {
         renderStatus(state.lastGoodData);
-      } else {
-        setBadge("error", "Unavailable");
       }
+      setBadge("error", t("statusUnavailable"));
     } finally {
       window.clearTimeout(timeout);
     }
@@ -385,6 +794,8 @@
     window.setInterval(fetchStatus, Number(config.pollIntervalMs || 5000));
   }
 
+  state.locale = detectLocale();
+  applyLocalization();
   initTheme();
   initProgressInteractions();
   startPolling();

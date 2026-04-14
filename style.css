@@ -98,6 +98,14 @@ body {
   color: var(--muted);
 }
 
+.last-update-count {
+  display: inline-block;
+  min-width: 3ch;
+  text-align: right;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
 .hero-meta,
 .footer {
   display: flex;
@@ -322,17 +330,17 @@ body {
 .progress-scroll {
   width: 100%;
   min-width: 0;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  overflow: visible;
+  padding-bottom: 0;
 }
 
 .progress-track {
   --segment-count: 1;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   min-height: 56px;
   width: 100%;
-  min-width: 375px;
+  min-width: 0;
   border-radius: 18px;
   background: color-mix(in srgb, #d9c3a0 68%, var(--surface) 32%);
   border: 1px solid rgba(214, 169, 101, 0.42);
@@ -343,6 +351,13 @@ body {
 .progress-track:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--primary) 72%, white 28%);
   outline-offset: 2px;
+}
+
+.progress-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
 }
 
 .progress-bar {
@@ -359,7 +374,7 @@ body {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: repeat(var(--segment-count), minmax(78px, 1fr));
+  grid-template-columns: repeat(var(--segment-count), minmax(0, 1fr));
   min-height: 56px;
 }
 
@@ -367,7 +382,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 8px;
+  min-width: 0;
+  padding: 6px 4px;
   text-align: center;
   line-height: 1.15;
   font-size: 0.76rem;
@@ -394,6 +410,10 @@ body {
   opacity: 1;
 }
 
+.progress-track.hide-labels .progress-label {
+  opacity: 0;
+}
+
 .progress-segment.is-first {
   border-left: none;
 }
@@ -404,13 +424,14 @@ body {
 
 .progress-marker {
   position: absolute;
-  top: 6px;
-  bottom: 6px;
+  top: 5px;
+  bottom: 5px;
   left: 0%;
-  z-index: 3;
+  z-index: 4;
   width: 2px;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.12);
+  transform: translateX(-50%);
   transition: left 240ms ease;
 }
 
@@ -795,10 +816,6 @@ body[data-theme="light"] .progress-marker::before {
     padding: 14px;
   }
 
-  .progress-track {
-    min-width: 340px;
-  }
-
   .ring-list {
     gap: 8px;
   }
@@ -880,9 +897,5 @@ body[data-theme="light"] .progress-marker::before {
 
   .progress-header strong {
     font-size: 1.08rem;
-  }
-
-  .progress-track {
-    min-width: 300px;
   }
 }
