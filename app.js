@@ -13,10 +13,10 @@
   const I18N = {
     "zh-CN": {
       heroEyebrow: "MAA OneBot Adapter",
-      heroTitle: "运行仪表盘",
-      heroSubtitle: "运行状态、执行进度与系统遥测",
+      heroTitle: "MAA 状态看板",
+      heroSubtitle: "MAA Status Dashboard",
       mainKicker: "核心运行态",
-      mainTitle: "执行状态",
+      mainTitle: "任务状态",
       currentUserLabel: "当前用户",
       nextUserLabel: "下一用户",
       progressKicker: "任务进度",
@@ -26,7 +26,7 @@
       pollingLabel: "拉取状态",
       errorLabel: "错误",
       telemetryKicker: "系统监控",
-      telemetryTitle: "遥测",
+      telemetryTitle: "系统遥测",
       cpuLabel: "CPU",
       cpuNote: "处理器占用",
       gpuLabel: "GPU",
@@ -71,10 +71,10 @@
     },
     en: {
       heroEyebrow: "MAA OneBot Adapter",
-      heroTitle: "Runtime Dashboard",
-      heroSubtitle: "Runtime status, execution progress, and system telemetry",
+      heroTitle: "MAA Status Dashboard",
+      heroSubtitle: "MAA Status Dashboard",
       mainKicker: "Main Runtime",
-      mainTitle: "Execution Status",
+      mainTitle: "Task Status",
       currentUserLabel: "Current User",
       nextUserLabel: "Next User",
       progressKicker: "Task Progress",
@@ -84,7 +84,7 @@
       pollingLabel: "Polling",
       errorLabel: "Error",
       telemetryKicker: "System Monitor",
-      telemetryTitle: "Telemetry",
+      telemetryTitle: "System Telemetry",
       cpuLabel: "CPU",
       cpuNote: "Processor Usage",
       gpuLabel: "GPU",
@@ -129,10 +129,10 @@
     },
     "zh-TW": {
       heroEyebrow: "MAA OneBot Adapter",
-      heroTitle: "執行儀表板",
-      heroSubtitle: "執行狀態、進度與系統遙測",
+      heroTitle: "MAA 狀態看板",
+      heroSubtitle: "MAA Status Dashboard",
       mainKicker: "核心執行態",
-      mainTitle: "執行狀態",
+      mainTitle: "任務狀態",
       currentUserLabel: "目前使用者",
       nextUserLabel: "下一位使用者",
       progressKicker: "任務進度",
@@ -142,7 +142,7 @@
       pollingLabel: "輪詢狀態",
       errorLabel: "錯誤",
       telemetryKicker: "系統監控",
-      telemetryTitle: "遙測",
+      telemetryTitle: "系統遙測",
       cpuLabel: "CPU",
       cpuNote: "處理器使用率",
       gpuLabel: "GPU",
@@ -187,10 +187,10 @@
     },
     ja: {
       heroEyebrow: "MAA OneBot Adapter",
-      heroTitle: "ランタイムダッシュボード",
-      heroSubtitle: "実行状態、進行状況、システムテレメトリ",
+      heroTitle: "MAA ステータスダッシュボード",
+      heroSubtitle: "MAA Status Dashboard",
       mainKicker: "メインランタイム",
-      mainTitle: "実行ステータス",
+      mainTitle: "タスク状態",
       currentUserLabel: "現在のユーザー",
       nextUserLabel: "次のユーザー",
       progressKicker: "進行状況",
@@ -200,7 +200,7 @@
       pollingLabel: "取得状態",
       errorLabel: "エラー",
       telemetryKicker: "システムモニター",
-      telemetryTitle: "テレメトリ",
+      telemetryTitle: "システムテレメトリ",
       cpuLabel: "CPU",
       cpuNote: "プロセッサ使用率",
       gpuLabel: "GPU",
@@ -250,14 +250,11 @@
     connectionBadge: document.getElementById("connection-badge"),
     sourceLabel: document.getElementById("source-label"),
     lastUpdateChip: document.getElementById("last-update-chip"),
-    heroEyebrow: document.getElementById("hero-eyebrow"),
     heroTitle: document.getElementById("hero-title"),
     heroSubtitle: document.getElementById("hero-subtitle"),
-    mainKicker: document.getElementById("main-kicker"),
     mainTitle: document.getElementById("main-title"),
     currentUserLabel: document.getElementById("current-user-label"),
     nextUserLabel: document.getElementById("next-user-label"),
-    progressKicker: document.getElementById("progress-kicker"),
     controllerState: document.getElementById("controller-state"),
     controllerStateCompact: document.getElementById("controller-state-compact"),
     controllerLabel: document.getElementById("controller-label"),
@@ -288,12 +285,7 @@
     pollStatusCompact: document.getElementById("poll-status-compact"),
     pollingLabel: document.getElementById("polling-label"),
     pollingLabelCompact: document.getElementById("polling-label-compact"),
-    errorText: document.getElementById("error-text"),
-    errorTextCompact: document.getElementById("error-text-compact"),
-    errorLabel: document.getElementById("error-label"),
-    errorLabelCompact: document.getElementById("error-label-compact"),
     themeToggle: document.getElementById("theme-toggle"),
-    telemetryKicker: document.getElementById("telemetry-kicker"),
     telemetryTitle: document.getElementById("telemetry-title"),
     cpuLabel: document.getElementById("cpu-label"),
     cpuNote: document.getElementById("cpu-note"),
@@ -356,15 +348,17 @@
 
   function applyLocalization() {
     document.documentElement.lang = state.locale;
+    document.title = t("heroTitle");
 
-    setTextContent(els.heroEyebrow, t("heroEyebrow"));
     setTextContent(els.heroTitle, t("heroTitle"));
-    setTextContent(els.heroSubtitle, t("heroSubtitle"));
-    setTextContent(els.mainKicker, t("mainKicker"));
+    if (els.heroSubtitle) {
+      const showSubtitle = state.locale !== "en";
+      els.heroSubtitle.hidden = !showSubtitle;
+      els.heroSubtitle.textContent = showSubtitle ? I18N.en.heroTitle : "";
+    }
     setTextContent(els.mainTitle, t("mainTitle"));
     setTextContent(els.currentUserLabel, t("currentUserLabel"));
     setTextContent(els.nextUserLabel, t("nextUserLabel"));
-    setTextContent(els.progressKicker, t("progressKicker"));
     setTextContent(els.controllerLabel, t("controllerLabel"));
     setTextContent(els.controllerLabelCompact, t("controllerLabel"));
     setTextContent(els.maaStatusLabel, t("maaStatusLabel"));
@@ -373,9 +367,6 @@
     setTextContent(els.connectionLabelCompact, t("connectionLabel"));
     setTextContent(els.pollingLabel, t("pollingLabel"));
     setTextContent(els.pollingLabelCompact, t("pollingLabel"));
-    setTextContent(els.errorLabel, t("errorLabel"));
-    setTextContent(els.errorLabelCompact, t("errorLabel"));
-    setTextContent(els.telemetryKicker, t("telemetryKicker"));
     setTextContent(els.telemetryTitle, t("telemetryTitle"));
     setTextContent(els.cpuLabel, t("cpuLabel"));
     setTextContent(els.cpuNote, t("cpuNote"));
@@ -387,15 +378,13 @@
       els.progressTrack.setAttribute("aria-label", t("progressTrackAria"));
     }
 
+    hideBadge();
     setTextContent(els.sourceLabel, t("sourceLabel", { value: t("pending") }));
     if (!state.lastGoodData) {
-      setBadge("neutral", t("statusConnecting"));
       setTextContent(els.pollStatus, t("pollInitializing"));
       setTextContent(els.pollStatusCompact, t("pollInitializing"));
       setTextContent(els.currentUserNote, t("currentUserNoteRunning"));
       setTextContent(els.nextUserNote, t("nextUserNoteRunning"));
-      setTextContent(els.errorText, t("none"));
-      setTextContent(els.errorTextCompact, t("none"));
     }
     updateLastUpdateDisplay(state.lastRenderedLastUpdate);
     applyTheme(state.theme);
@@ -476,6 +465,10 @@
   }
 
   function setBadge(kind, text) {
+    if (!els.connectionBadge) {
+      return;
+    }
+
     els.connectionBadge.className = "badge";
     if (kind === "ok") {
       els.connectionBadge.classList.add("badge-ok");
@@ -487,6 +480,16 @@
       els.connectionBadge.classList.add("badge-neutral");
     }
     els.connectionBadge.textContent = text;
+    els.connectionBadge.hidden = false;
+  }
+
+  function hideBadge() {
+    if (!els.connectionBadge) {
+      return;
+    }
+
+    els.connectionBadge.hidden = true;
+    els.connectionBadge.textContent = "";
   }
 
   function getExecutionConfigs(data) {
@@ -650,18 +653,9 @@
   }
 
   function renderStatus(data) {
-    const online = Boolean(data.online);
     const telemetry = data.telemetry || {};
     const mem = telemetry.mem || {};
     const executionConfigs = getExecutionConfigs(data);
-
-    if (online) {
-      setBadge("ok", t("statusOnline"));
-    } else if (data.last_update) {
-      setBadge("warn", t("statusOffline"));
-    } else {
-      setBadge("error", t("statusOffline"));
-    }
 
     els.sourceLabel.textContent = t("sourceLabel", { value: data.source || "-" });
     els.controllerState.textContent = data.controller_state || "-";
@@ -691,10 +685,6 @@
     els.connectionText.textContent = data.connection || "-";
     if (els.connectionTextCompact) {
       els.connectionTextCompact.textContent = data.connection || "-";
-    }
-    els.errorText.textContent = data.last_error || t("none");
-    if (els.errorTextCompact) {
-      els.errorTextCompact.textContent = data.last_error || t("none");
     }
     renderRing(document.querySelector(".cpu-ring"), els.cpuValue, telemetry.cpu, "%");
     renderRing(document.querySelector(".gpu-ring"), els.gpuValue, telemetry.gpu, "%");
@@ -774,6 +764,7 @@
       if (els.pollStatusCompact) {
         els.pollStatusCompact.textContent = t("pollUpdated");
       }
+      hideBadge();
       renderStatus(data);
     } catch (error) {
       els.pollStatus.textContent = t("pollFetchFailedDetail", { message: error.message });
