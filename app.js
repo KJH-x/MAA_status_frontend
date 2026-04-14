@@ -4,7 +4,8 @@
     lastGoodData: null,
     lastFetchAt: 0,
     refreshTimerId: null,
-    theme: "dark"
+    theme: "dark",
+    progressLabelsPinned: false
   };
 
   const els = {
@@ -20,6 +21,7 @@
     currentUserPane: document.getElementById("current-user-pane"),
     nextUserPane: document.getElementById("next-user-pane"),
     currentUser: document.getElementById("current-user"),
+    currentUserNote: document.getElementById("current-user-note"),
     nextUser: document.getElementById("next-user"),
     nextUserNote: document.getElementById("next-user-note"),
     progressText: document.getElementById("progress-text"),
@@ -114,6 +116,22 @@
     return "-";
   }
 
+  function getDisplayCurrentUser(data) {
+    const progressPhase = String(data.progress_phase || "").trim();
+    if (progressPhase === "completed") {
+      return "全部完成";
+    }
+    return String(data.current_user || "").trim() || "-";
+  }
+
+  function getCurrentUserNote(data) {
+    const progressPhase = String(data.progress_phase || "").trim();
+    if (progressPhase === "completed") {
+      return "本轮任务已全部完成";
+    }
+    return "当前执行账号 / Session";
+  }
+
   function getNextUserNote(data) {
     const progressPhase = String(data.progress_phase || "").trim();
     if (progressPhase === "completed") {
@@ -169,13 +187,56 @@
       if (index === 0) {
         segment.classList.add("is-first");
       }
-      segment.textContent = label;
+      segment.title = label;
+
+      const text = document.createElement("span");
+      text.className = "progress-label";
+      text.textContent = label;
+      segment.appendChild(text);
       els.progressSegments.appendChild(segment);
     });
 
     els.progressBar.style.width = clampedPercent + "%";
     els.progressMarker.style.display = hasConfigs ? "block" : "none";
     els.progressMarker.style.left = clampedPercent + "%";
+  }
+
+  function toggleProgressLabels(forceValue) {
+    if (!els.progressTrack) {
+      return;
+    }
+
+    if (typeof forceValue === "boolean") {
+      state.progressLabelsPinned = forceValue;
+    } else {
+      state.progressLabelsPinned = !state.progressLabelsPinned;
+    }
+
+    els.progressTrack.classList.toggle("show-labels", state.progressLabelsPinned);
+    els.progressTrack.setAttribute("aria-pressed", state.progressLabelsPinned ? "true" : "false");
+  }
+
+  function initProgressInteractions() {
+    if (!els.progressTrack) {
+      return;
+    }
+
+    els.progressTrack.addEventListener("click", function () {
+      toggleProgressLabels();
+    });
+
+    els.progressTrack.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleProgressLabels();
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        toggleProgressLabels(false);
+      }
+    });
+
+    toggleProgressLabels(false);
   }
 
   function renderStatus(data) {
@@ -202,7 +263,10 @@
     if (els.maaStatusCompact) {
       els.maaStatusCompact.textContent = data.maa_status || "-";
     }
-    els.currentUser.textContent = data.current_user || "-";
+    els.currentUser.textContent = getDisplayCurrentUser(data);
+    if (els.currentUserNote) {
+      els.currentUserNote.textContent = getCurrentUserNote(data);
+    }
     const displayNextUser = getDisplayNextUser(data, executionConfigs);
     els.nextUser.textContent = displayNextUser;
     if (els.nextUserNote) {
@@ -322,5 +386,6 @@
   }
 
   initTheme();
+  initProgressInteractions();
   startPolling();
 })();

@@ -39,7 +39,7 @@
           <div id="current-user-pane" class="user-pane user-pane-current">
             <span class="stat-label stat-label-light">Current User</span>
             <strong id="current-user" class="stat-hero stat-hero-light">-</strong>
-            <span class="stat-note stat-note-light">当前执行账号 / Session</span>
+            <span id="current-user-note" class="stat-note stat-note-light">当前执行账号 / Session</span>
           </div>
           <div id="next-user-pane" class="user-pane user-pane-next">
             <span class="stat-label">Next User</span>
@@ -58,7 +58,7 @@
             <strong id="progress-percent">0%</strong>
           </div>
           <div class="progress-scroll">
-            <div id="progress-track" class="progress-track">
+            <div id="progress-track" class="progress-track" tabindex="0" role="button" aria-pressed="false" aria-label="悬浮或点击以查看配置名称">
               <div id="progress-bar" class="progress-bar"></div>
               <div id="progress-segments" class="progress-segments"></div>
               <div id="progress-marker" class="progress-marker" aria-hidden="true"></div>
