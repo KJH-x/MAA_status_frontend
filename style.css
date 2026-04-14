@@ -121,6 +121,8 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1.85fr) minmax(320px, 0.95fr);
   gap: 18px;
+  perspective: 1400px;
+  perspective-origin: center top;
 }
 
 .card {
@@ -133,11 +135,44 @@ body {
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
+[data-tilt] {
+  --tilt-rotate-x: 0deg;
+  --tilt-rotate-y: 0deg;
+  --tilt-lift: 0px;
+  --tilt-z: 0px;
+  --tilt-scale: 1;
+  transform:
+    translate3d(0, calc(var(--tilt-lift) * -1), var(--tilt-z))
+    rotateX(var(--tilt-rotate-x))
+    rotateY(var(--tilt-rotate-y))
+    scale(var(--tilt-scale));
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+[data-tilt="large"] {
+  --tilt-max-rotate: 5deg;
+  --tilt-max-z: 10px;
+  --tilt-hover-scale: 1.003;
+}
+
+[data-tilt="small"] {
+  --tilt-max-rotate: 9deg;
+  --tilt-max-z: 16px;
+  --tilt-hover-scale: 1.008;
+}
+
 .card:hover,
+.progress-panel:hover,
+.status-pill:hover,
 .status-block:hover,
 .ring-card:hover,
 .user-dual-card:hover {
-  transform: translateY(-4px);
+  --tilt-lift: 4px;
+  --tilt-scale: var(--tilt-hover-scale, 1);
   box-shadow: 0 24px 54px rgba(15, 23, 42, 0.16);
   border-color: rgba(79, 70, 229, 0.18);
 }
@@ -608,6 +643,20 @@ body[data-theme="light"] .badge-warn {
 body[data-theme="light"] .badge-error {
   background: #fee2e2;
   color: #991b1b;
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .dashboard-grid {
+    perspective: none;
+  }
+
+  [data-tilt] {
+    --tilt-rotate-x: 0deg !important;
+    --tilt-rotate-y: 0deg !important;
+    --tilt-z: 0px !important;
+    --tilt-scale: 1 !important;
+    will-change: auto;
+  }
 }
 
 body[data-theme="light"] .progress-track {

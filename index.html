@@ -25,7 +25,7 @@
     </header>
 
     <main class="dashboard-grid">
-      <section class="card card-main">
+      <section class="card card-main" data-tilt="large">
         <div class="section-head">
           <div>
             <h2 id="main-title">Task Status</h2>
@@ -33,7 +33,7 @@
           <span id="last-update-chip" class="meta-chip">Last update: -</span>
         </div>
 
-        <article id="user-card" class="user-dual-card">
+        <article id="user-card" class="user-dual-card" data-tilt="large">
           <div id="current-user-pane" class="user-pane user-pane-current">
             <span id="current-user-label" class="stat-label stat-label-light">Current User</span>
             <strong id="current-user" class="stat-hero stat-hero-light">-</strong>
@@ -46,7 +46,7 @@
           </div>
         </article>
 
-        <section class="progress-panel">
+        <section class="progress-panel" data-tilt="small">
           <div class="progress-header">
             <div>
               <strong id="progress-text">0 / 0</strong>
@@ -66,48 +66,48 @@
         </section>
 
         <section class="status-strip" aria-label="Compact Runtime Status">
-          <article class="status-pill">
+          <article class="status-pill" data-tilt="small">
             <span id="controller-label-compact" class="stat-label">Controller</span>
             <strong id="controller-state-compact">-</strong>
           </article>
-          <article class="status-pill">
+          <article class="status-pill" data-tilt="small">
             <span id="maa-label-compact" class="stat-label">MAA</span>
             <strong id="maa-status-compact">-</strong>
           </article>
-          <article class="status-pill">
+          <article class="status-pill" data-tilt="small">
             <span id="connection-label-compact" class="stat-label">Conn</span>
             <strong id="connection-text-compact">-</strong>
           </article>
-          <article class="status-pill">
+          <article class="status-pill" data-tilt="small">
             <span id="polling-label-compact" class="stat-label">Polling</span>
             <strong id="poll-status-compact">Initializing</strong>
           </article>
         </section>
 
         <div class="status-grid status-grid-main">
-          <article class="status-block">
+          <article class="status-block" data-tilt="small">
             <span id="controller-label" class="stat-label">Controller</span>
             <strong id="controller-state">-</strong>
           </article>
 
-          <article class="status-block">
+          <article class="status-block" data-tilt="small">
             <span id="maa-status-label" class="stat-label">MAA Status</span>
             <strong id="maa-status">-</strong>
           </article>
 
-          <article class="status-block">
+          <article class="status-block" data-tilt="small">
             <span id="connection-label" class="stat-label">Connection</span>
             <strong id="connection-text">-</strong>
           </article>
 
-          <article class="status-block">
+          <article class="status-block" data-tilt="small">
             <span id="polling-label" class="stat-label">Polling</span>
             <strong id="poll-status">Initializing</strong>
           </article>
         </div>
       </section>
 
-      <section class="card card-metrics">
+      <section class="card card-metrics" data-tilt="large">
         <div class="section-head section-head-compact">
           <div>
             <h2 id="telemetry-title">System Telemetry</h2>
@@ -115,7 +115,7 @@
         </div>
 
         <div class="ring-list">
-          <article class="ring-card">
+          <article class="ring-card" data-tilt="small">
             <div class="ring-shell cpu-ring" style="--pct:0">
               <div class="ring-inner">
                 <span class="ring-value" id="cpu-value">0%</span>
@@ -127,7 +127,7 @@
             </div>
           </article>
 
-          <article class="ring-card">
+          <article class="ring-card" data-tilt="small">
             <div class="ring-shell gpu-ring" style="--pct:0">
               <div class="ring-inner">
                 <span class="ring-value" id="gpu-value">0%</span>
@@ -139,7 +139,7 @@
             </div>
           </article>
 
-          <article class="ring-card">
+          <article class="ring-card" data-tilt="small">
             <div class="ring-shell mem-ring" style="--pct:0">
               <div class="ring-inner">
                 <span class="ring-value" id="mem-value">0%</span>
