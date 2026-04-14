@@ -167,12 +167,46 @@ body {
   margin-top: 16px;
 }
 
+.status-strip {
+  display: none;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
 .status-block {
   padding: 16px;
   border-radius: 22px;
   border: 1px solid var(--line);
   background: var(--surface-soft);
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.status-pill {
+  min-width: 0;
+  padding: 10px 8px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+  text-align: center;
+}
+
+.status-pill strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.86rem;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.status-pill .stat-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.status-pill-error {
+  overflow: hidden;
 }
 
 .user-dual-card {
@@ -537,6 +571,94 @@ body[data-theme="light"] .progress-marker::before {
   }
 }
 
+@media (max-width: 860px) {
+  .card-main,
+  .card-metrics {
+    min-height: auto;
+  }
+
+  .user-dual-card {
+    grid-template-columns: minmax(0, 1fr) minmax(104px, 0.62fr);
+  }
+
+  .user-pane {
+    padding: 14px 16px;
+  }
+
+  .user-pane-current {
+    padding-right: 28px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+  }
+
+  .user-pane-next {
+    min-width: 104px;
+    margin-left: -18px;
+    padding-left: 24px;
+  }
+
+  .stat-hero {
+    font-size: 1.62rem !important;
+  }
+
+  .next-user-value {
+    font-size: 1rem;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .stat-note {
+    margin-top: 5px;
+    font-size: 0.78rem;
+  }
+
+  .status-strip {
+    display: grid;
+  }
+
+  .status-grid,
+  .meta-grid {
+    display: none;
+  }
+
+  .ring-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .ring-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: 12px 8px;
+    border-radius: 18px;
+  }
+
+  .ring-shell {
+    width: 72px;
+    height: 72px;
+  }
+
+  .ring-inner {
+    width: 50px;
+    height: 50px;
+  }
+
+  .ring-value {
+    font-size: 0.78rem;
+  }
+
+  .ring-copy strong {
+    font-size: 0.94rem;
+  }
+
+  .ring-copy span {
+    margin-top: 4px;
+    font-size: 0.74rem;
+    line-height: 1.2;
+  }
+}
+
 @media (max-width: 720px) {
   .page-shell {
     padding: 16px;
@@ -546,29 +668,174 @@ body[data-theme="light"] .progress-marker::before {
     flex-direction: column;
   }
 
-  .status-grid,
-  .meta-grid {
-    grid-template-columns: 1fr;
+  .hero-meta {
+    width: 100%;
+  }
+
+  .hero-meta .meta-chip,
+  .hero-meta .badge,
+  .theme-toggle {
+    min-height: 30px;
+    font-size: 0.78rem;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .section-head {
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .section-head h2 {
+    font-size: 1.24rem;
   }
 
   .user-dual-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(94px, 0.56fr);
+    border-radius: 22px;
+  }
+
+  .user-pane {
+    padding: 12px 14px;
+  }
+
+  .user-pane-current {
+    padding-right: 24px;
   }
 
   .user-pane-next {
-    clip-path: none;
-    min-width: auto;
-    margin-left: 0;
-    padding-left: 22px;
+    min-width: 94px;
+    margin-left: -16px;
+    padding-left: 20px;
   }
 
-  .ring-card {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
+  .stat-label {
+    font-size: 0.78rem;
+  }
+
+  .stat-hero {
+    font-size: 1.32rem !important;
+    line-height: 1.08;
+    word-break: break-word;
+  }
+
+  .next-user-value {
+    font-size: 0.92rem;
+  }
+
+  .status-strip {
+    grid-template-columns: repeat(5, minmax(56px, 1fr));
+    gap: 6px;
+  }
+
+  .status-pill {
+    padding: 8px 6px;
+    border-radius: 14px;
+  }
+
+  .status-pill strong {
+    margin-top: 4px;
+    font-size: 0.73rem;
+  }
+
+  .status-pill .stat-label {
+    font-size: 0.58rem;
+  }
+
+  .progress-panel {
+    padding: 14px;
   }
 
   .progress-track {
     min-width: 360px;
+  }
+
+  .ring-list {
+    gap: 8px;
+  }
+
+  .ring-card {
+    padding: 10px 6px;
+  }
+
+  .ring-shell {
+    width: 60px;
+    height: 60px;
+  }
+
+  .ring-inner {
+    width: 42px;
+    height: 42px;
+  }
+
+  .ring-value {
+    font-size: 0.66rem;
+  }
+
+  .ring-copy strong {
+    font-size: 0.82rem;
+  }
+
+  .ring-copy span {
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .page-shell {
+    padding: 12px;
+  }
+
+  .hero h1 {
+    font-size: 1.62rem;
+  }
+
+  .user-dual-card {
+    grid-template-columns: minmax(0, 1fr) minmax(82px, 0.5fr);
+  }
+
+  .user-pane-current {
+    clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+    padding-right: 18px;
+  }
+
+  .user-pane-next {
+    min-width: 82px;
+    margin-left: -12px;
+    padding-left: 16px;
+  }
+
+  .stat-hero {
+    font-size: 1.14rem !important;
+  }
+
+  .next-user-value {
+    font-size: 0.82rem;
+  }
+
+  .status-strip {
+    gap: 4px;
+  }
+
+  .status-pill {
+    padding: 7px 4px;
+  }
+
+  .status-pill strong {
+    font-size: 0.66rem;
+  }
+
+  .progress-header {
+    align-items: center;
+  }
+
+  .progress-header strong {
+    font-size: 1.08rem;
+  }
+
+  .progress-track {
+    min-width: 320px;
   }
 }
