@@ -16,6 +16,9 @@
     controllerStateCompact: document.getElementById("controller-state-compact"),
     maaStatus: document.getElementById("maa-status"),
     maaStatusCompact: document.getElementById("maa-status-compact"),
+    userCard: document.getElementById("user-card"),
+    currentUserPane: document.getElementById("current-user-pane"),
+    nextUserPane: document.getElementById("next-user-pane"),
     currentUser: document.getElementById("current-user"),
     nextUser: document.getElementById("next-user"),
     nextUserNote: document.getElementById("next-user-note"),
@@ -128,6 +131,20 @@
     return "即将执行";
   }
 
+  function updateUserCardState(data, displayNextUser) {
+    if (!els.userCard || !els.nextUserPane) {
+      return;
+    }
+
+    const progressPhase = String(data.progress_phase || "").trim();
+    const isCompleted = progressPhase === "completed";
+    const hasVisibleNextUser = Boolean(String(displayNextUser || "").trim() && displayNextUser !== "-");
+
+    els.userCard.classList.toggle("is-completed", isCompleted);
+    els.userCard.classList.toggle("has-next-user", !isCompleted && hasVisibleNextUser);
+    els.nextUserPane.setAttribute("aria-hidden", isCompleted ? "true" : "false");
+  }
+
   function renderProgressTimeline(executionConfigs, progressPercent) {
     if (!els.progressTrack || !els.progressSegments || !els.progressBar || !els.progressMarker) {
       return;
@@ -186,10 +203,12 @@
       els.maaStatusCompact.textContent = data.maa_status || "-";
     }
     els.currentUser.textContent = data.current_user || "-";
-    els.nextUser.textContent = getDisplayNextUser(data, executionConfigs);
+    const displayNextUser = getDisplayNextUser(data, executionConfigs);
+    els.nextUser.textContent = displayNextUser;
     if (els.nextUserNote) {
       els.nextUserNote.textContent = getNextUserNote(data);
     }
+    updateUserCardState(data, displayNextUser);
     els.progressText.textContent = `${data.step || 0} / ${data.total_steps || 0}`;
     els.progressPercent.textContent = `${Number(data.progress_percent || 0).toFixed(0)}%`;
     renderProgressTimeline(executionConfigs, data.progress_percent);

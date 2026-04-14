@@ -211,9 +211,8 @@ body {
 }
 
 .user-dual-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
-  align-items: stretch;
+  position: relative;
+  display: block;
   margin-bottom: 16px;
   overflow: hidden;
   border-radius: 26px;
@@ -229,18 +228,31 @@ body {
 
 .user-pane-current {
   z-index: 1;
+  min-height: 158px;
   background: linear-gradient(120deg, #5044ea 0%, #625ae7 52%, #7e8ef8 100%);
-  clip-path: polygon(0 0, 100% 0, calc(100% - 28px) 100%, 0 100%);
-  padding-right: 42px;
+  padding-right: 220px;
 }
 
 .user-pane-next {
-  z-index: 2;
-  min-width: 190px;
-  margin-left: -28px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  width: 212px;
   background: linear-gradient(140deg, #d4ebd9 0%, #e9f5e9 100%);
   clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
   padding-left: 38px;
+  box-shadow: -12px 0 24px rgba(15, 23, 42, 0.08);
+}
+
+.user-dual-card.is-completed .user-pane-current {
+  min-height: 158px;
+  padding-right: 22px;
+}
+
+.user-dual-card.is-completed .user-pane-next {
+  display: none;
 }
 
 .meta-error {
@@ -585,23 +597,23 @@ body[data-theme="light"] .progress-marker::before {
     min-height: auto;
   }
 
-  .user-dual-card {
-    grid-template-columns: minmax(0, 1fr) minmax(104px, 0.62fr);
-  }
-
   .user-pane {
     padding: 14px 16px;
   }
 
   .user-pane-current {
-    padding-right: 28px;
-    clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+    min-height: 132px;
+    padding-right: 136px;
   }
 
   .user-pane-next {
-    min-width: 104px;
-    margin-left: -18px;
+    width: 120px;
     padding-left: 24px;
+  }
+
+  .user-dual-card.is-completed .user-pane-current {
+    min-height: 132px;
+    padding-right: 16px;
   }
 
   .stat-hero {
@@ -701,7 +713,6 @@ body[data-theme="light"] .progress-marker::before {
   }
 
   .user-dual-card {
-    grid-template-columns: minmax(0, 1fr) minmax(94px, 0.56fr);
     border-radius: 22px;
   }
 
@@ -710,13 +721,18 @@ body[data-theme="light"] .progress-marker::before {
   }
 
   .user-pane-current {
-    padding-right: 24px;
+    min-height: 118px;
+    padding-right: 114px;
   }
 
   .user-pane-next {
-    min-width: 94px;
-    margin-left: -16px;
+    width: 102px;
     padding-left: 20px;
+  }
+
+  .user-dual-card.is-completed .user-pane-current {
+    min-height: 118px;
+    padding-right: 14px;
   }
 
   .stat-label {
@@ -800,19 +816,19 @@ body[data-theme="light"] .progress-marker::before {
     font-size: 1.62rem;
   }
 
-  .user-dual-card {
-    grid-template-columns: minmax(0, 1fr) minmax(82px, 0.5fr);
-  }
-
   .user-pane-current {
-    clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
-    padding-right: 18px;
+    min-height: 104px;
+    padding-right: 96px;
   }
 
   .user-pane-next {
-    min-width: 82px;
-    margin-left: -12px;
+    width: 88px;
     padding-left: 16px;
+  }
+
+  .user-dual-card.is-completed .user-pane-current {
+    min-height: 104px;
+    padding-right: 12px;
   }
 
   .stat-hero {
