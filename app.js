@@ -121,7 +121,7 @@
     const clampedPercent = Math.max(0, Math.min(100, Number(progressPercent || 0)));
 
     els.progressTrack.style.setProperty("--segment-count", String(segmentCount));
-    els.progressTrack.style.minWidth = Math.max(400, segmentCount * 84) + "px";
+    els.progressTrack.style.minWidth = Math.max(375, segmentCount * 76) + "px";
     els.progressTrack.classList.toggle("is-placeholder", !hasConfigs);
     els.progressSegments.replaceChildren();
 
