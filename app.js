@@ -13,7 +13,9 @@
     sourceLabel: document.getElementById("source-label"),
     lastUpdateChip: document.getElementById("last-update-chip"),
     controllerState: document.getElementById("controller-state"),
+    controllerStateCompact: document.getElementById("controller-state-compact"),
     maaStatus: document.getElementById("maa-status"),
+    maaStatusCompact: document.getElementById("maa-status-compact"),
     currentUser: document.getElementById("current-user"),
     nextUser: document.getElementById("next-user"),
     progressText: document.getElementById("progress-text"),
@@ -24,8 +26,11 @@
     progressMarker: document.getElementById("progress-marker"),
     lastUpdate: document.getElementById("last-update"),
     connectionText: document.getElementById("connection-text"),
+    connectionTextCompact: document.getElementById("connection-text-compact"),
     pollStatus: document.getElementById("poll-status"),
+    pollStatusCompact: document.getElementById("poll-status-compact"),
     errorText: document.getElementById("error-text"),
+    errorTextCompact: document.getElementById("error-text-compact"),
     themeToggle: document.getElementById("theme-toggle"),
     cpuValue: document.getElementById("cpu-value"),
     gpuValue: document.getElementById("gpu-value"),
@@ -155,7 +160,13 @@
 
     els.sourceLabel.textContent = `source: ${data.source || "-"}`;
     els.controllerState.textContent = data.controller_state || "-";
+    if (els.controllerStateCompact) {
+      els.controllerStateCompact.textContent = data.controller_state || "-";
+    }
     els.maaStatus.textContent = data.maa_status || "-";
+    if (els.maaStatusCompact) {
+      els.maaStatusCompact.textContent = data.maa_status || "-";
+    }
     els.currentUser.textContent = data.current_user || "-";
     els.nextUser.textContent = getDisplayNextUser(data, executionConfigs);
     els.progressText.textContent = `${data.step || 0} / ${data.total_steps || 0}`;
@@ -164,7 +175,13 @@
     els.lastUpdate.textContent = `Last update: ${formatDate(data.last_update)}`;
     els.lastUpdateChip.textContent = `Last update: ${formatDate(data.last_update)}`;
     els.connectionText.textContent = data.connection || "-";
+    if (els.connectionTextCompact) {
+      els.connectionTextCompact.textContent = data.connection || "-";
+    }
     els.errorText.textContent = data.last_error || "None";
+    if (els.errorTextCompact) {
+      els.errorTextCompact.textContent = data.last_error || "None";
+    }
     renderRing(document.querySelector(".cpu-ring"), els.cpuValue, telemetry.cpu, "%");
     renderRing(document.querySelector(".gpu-ring"), els.gpuValue, telemetry.gpu, "%");
     renderRing(document.querySelector(".mem-ring"), els.memValue, mem.percent, "%");
@@ -239,9 +256,15 @@
       const data = await response.json();
       state.lastGoodData = data;
       els.pollStatus.textContent = "Updated";
+      if (els.pollStatusCompact) {
+        els.pollStatusCompact.textContent = "Updated";
+      }
       renderStatus(data);
     } catch (error) {
       els.pollStatus.textContent = `Fetch failed: ${error.message}`;
+      if (els.pollStatusCompact) {
+        els.pollStatusCompact.textContent = "Fetch failed";
+      }
       if (state.lastGoodData) {
         renderStatus(state.lastGoodData);
       } else {
