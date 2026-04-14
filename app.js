@@ -27,7 +27,9 @@
     cpuValue: document.getElementById("cpu-value"),
     gpuValue: document.getElementById("gpu-value"),
     memValue: document.getElementById("mem-value"),
-    memDetail: document.getElementById("mem-detail")
+    memDetail: document.getElementById("mem-detail"),
+    discCanvas: document.getElementById("disc-canvas"),
+    discStatus: document.getElementById("disc-status")
   };
 
   function withCacheBust(url) {
@@ -183,6 +185,120 @@
     window.setInterval(fetchStatus, Number(config.pollIntervalMs || 5000));
   }
 
+  function setDiscStatus(text) {
+    if (els.discStatus) {
+      els.discStatus.textContent = text;
+    }
+  }
+
+  async function initEndfieldDisc() {
+    if (!els.discCanvas) {
+      return;
+    }
+
+    if (!window.THREE) {
+      setDiscStatus("Three.js not available.");
+      return;
+    }
+
+    const vertexRes = await fetch("./shaders/disc.vert.glsl");
+    const fragmentRes = await fetch("./shaders/disc.frag.glsl");
+    const vertexShader = await vertexRes.text();
+    const fragmentShader = await fragmentRes.text();
+
+    const scene = new window.THREE.Scene();
+    scene.background = null;
+
+    const camera = new window.THREE.PerspectiveCamera(42, 1, 0.1, 20);
+    camera.position.set(0, 0, 2.35);
+
+    const renderer = new window.THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    els.discCanvas.appendChild(renderer.domElement);
+
+    const uniforms = {
+      uTime: { value: 0 },
+      uCursor: { value: new window.THREE.Vector2(0.5, 0.5) },
+      uHover: { value: 0 },
+      uFalloff: { value: 20.0 },
+      uAmplitude: { value: 0.16 },
+      uSinkStrength: { value: 0.045 },
+      uRippleStrength: { value: 0.03 },
+      uCursorVelocity: { value: 0 }
+    };
+
+    const geometry = new window.THREE.CircleGeometry(1, 240);
+    const material = new window.THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms,
+      transparent: true
+    });
+
+    const discMesh = new window.THREE.Mesh(geometry, material);
+    scene.add(discMesh);
+
+    const raycaster = new window.THREE.Raycaster();
+    const ndc = new window.THREE.Vector2(0, 0);
+    const targetCursor = new window.THREE.Vector2(0.5, 0.5);
+    const smoothCursor = new window.THREE.Vector2(0.5, 0.5);
+    const previousCursor = new window.THREE.Vector2(0.5, 0.5);
+    let targetHover = 0;
+
+    function resizeRenderer() {
+      const width = els.discCanvas.clientWidth;
+      const height = els.discCanvas.clientHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+
+    function updateCursorFromPointer(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      ndc.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(ndc, camera);
+      const hit = raycaster.intersectObject(discMesh, false)[0];
+      if (hit && hit.uv) {
+        targetCursor.copy(hit.uv);
+        targetHover = 1;
+      } else {
+        targetHover = 0;
+      }
+    }
+
+    renderer.domElement.addEventListener("pointermove", updateCursorFromPointer);
+    renderer.domElement.addEventListener("pointerleave", function () {
+      targetHover = 0;
+    });
+
+    window.addEventListener("resize", resizeRenderer);
+    resizeRenderer();
+    setDiscStatus("Interactive shader deformation active.");
+
+    const clock = new window.THREE.Clock();
+    function animate() {
+      const delta = Math.min(clock.getDelta(), 0.05);
+      uniforms.uTime.value += delta;
+
+      smoothCursor.lerp(targetCursor, 1.0 - Math.exp(-delta * 14.0));
+      const velocity = smoothCursor.distanceTo(previousCursor) / Math.max(delta, 1e-3);
+      previousCursor.copy(smoothCursor);
+
+      uniforms.uCursor.value.copy(smoothCursor);
+      uniforms.uCursorVelocity.value += (velocity - uniforms.uCursorVelocity.value) * (1.0 - Math.exp(-delta * 10.0));
+      uniforms.uHover.value += (targetHover - uniforms.uHover.value) * (1.0 - Math.exp(-delta * 12.0));
+
+      renderer.render(scene, camera);
+      window.requestAnimationFrame(animate);
+    }
+
+    animate();
+  }
+
   initTheme();
   startPolling();
+  initEndfieldDisc().catch(function (error) {
+    setDiscStatus(`Disc shader initialization failed: ${error.message}`);
+  });
 })();
