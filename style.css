@@ -572,6 +572,11 @@ body[data-theme="light"] .progress-marker::before {
 }
 
 @media (max-width: 860px) {
+  .card-main,
+  .card-metrics {
+    min-height: auto;
+  }
+
   .user-dual-card {
     grid-template-columns: minmax(0, 1fr) minmax(104px, 0.62fr);
   }
