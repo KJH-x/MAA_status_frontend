@@ -64,8 +64,8 @@
       timeMinutesAgo: "{count}分钟前",
       timeHoursAgo: "{count}小时前",
       timeDaysAgo: "{count}天前",
-      themeLight: "浅色",
-      themeDark: "深色",
+      themeLight: "切换到：浅色",
+      themeDark: "切换到：深色",
       themeLightAria: "切换到浅色主题",
       themeDarkAria: "切换到深色主题"
     },
@@ -122,8 +122,8 @@
       timeMinutesAgo: "{count}m ago",
       timeHoursAgo: "{count}h ago",
       timeDaysAgo: "{count}d ago",
-      themeLight: "Light",
-      themeDark: "Dark",
+      themeLight: "Switch to: Light",
+      themeDark: "Switch to: Dark",
       themeLightAria: "Switch to light theme",
       themeDarkAria: "Switch to dark theme"
     },
@@ -180,8 +180,8 @@
       timeMinutesAgo: "{count}分鐘前",
       timeHoursAgo: "{count}小時前",
       timeDaysAgo: "{count}天前",
-      themeLight: "淺色",
-      themeDark: "深色",
+      themeLight: "切換到：淺色",
+      themeDark: "切換到：深色",
       themeLightAria: "切換到淺色主題",
       themeDarkAria: "切換到深色主題"
     },
@@ -238,8 +238,8 @@
       timeMinutesAgo: "{count}分前",
       timeHoursAgo: "{count}時間前",
       timeDaysAgo: "{count}日前",
-      themeLight: "ライト",
-      themeDark: "ダーク",
+      themeLight: "切り替え先：ライト",
+      themeDark: "切り替え先：ダーク",
       themeLightAria: "ライトテーマに切り替え",
       themeDarkAria: "ダークテーマに切り替え"
     }
