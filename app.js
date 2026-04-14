@@ -18,7 +18,10 @@
     nextUser: document.getElementById("next-user"),
     progressText: document.getElementById("progress-text"),
     progressPercent: document.getElementById("progress-percent"),
+    progressTrack: document.getElementById("progress-track"),
     progressBar: document.getElementById("progress-bar"),
+    progressSegments: document.getElementById("progress-segments"),
+    progressMarker: document.getElementById("progress-marker"),
     lastUpdate: document.getElementById("last-update"),
     connectionText: document.getElementById("connection-text"),
     pollStatus: document.getElementById("poll-status"),
@@ -65,11 +68,82 @@
     els.connectionBadge.textContent = text;
   }
 
+  function getExecutionConfigs(data) {
+    if (Array.isArray(data.execution_configs) && data.execution_configs.length) {
+      return data.execution_configs
+        .map(function (item) {
+          return String(item || "").trim();
+        })
+        .filter(Boolean);
+    }
+
+    const totalSteps = Math.max(0, Number(data.total_steps || 0));
+    return Array.from({ length: totalSteps }, function (_, index) {
+      return "Step " + String(index + 1);
+    });
+  }
+
+  function getDisplayNextUser(data, executionConfigs) {
+    const rawNextUser = String(data.next_user || "").trim();
+    if (rawNextUser) {
+      return rawNextUser;
+    }
+
+    const currentUser = String(data.current_user || "").trim();
+    const progressPhase = String(data.progress_phase || "").trim();
+    const step = Number(data.step || 0);
+    const totalSteps = Number(data.total_steps || 0);
+
+    if (progressPhase === "not_started") {
+      return executionConfigs[0] || "-";
+    }
+
+    if (currentUser && totalSteps > 0 && step >= totalSteps) {
+      return currentUser;
+    }
+
+    return "-";
+  }
+
+  function renderProgressTimeline(executionConfigs, progressPercent) {
+    if (!els.progressTrack || !els.progressSegments || !els.progressBar || !els.progressMarker) {
+      return;
+    }
+
+    const hasConfigs = executionConfigs.length > 0;
+    const labels = hasConfigs ? executionConfigs : ["No queued configs"];
+    const segmentCount = labels.length;
+    const clampedPercent = Math.max(0, Math.min(100, Number(progressPercent || 0)));
+
+    els.progressTrack.style.setProperty("--segment-count", String(segmentCount));
+    els.progressTrack.style.minWidth = Math.max(560, segmentCount * 116) + "px";
+    els.progressTrack.classList.toggle("is-placeholder", !hasConfigs);
+    els.progressSegments.replaceChildren();
+
+    labels.forEach(function (label, index) {
+      const segment = document.createElement("div");
+      segment.className = "progress-segment";
+      if (!hasConfigs) {
+        segment.classList.add("is-placeholder");
+      }
+      if (index === 0) {
+        segment.classList.add("is-first");
+      }
+      segment.textContent = label;
+      els.progressSegments.appendChild(segment);
+    });
+
+    els.progressBar.style.width = clampedPercent + "%";
+    els.progressMarker.style.display = hasConfigs ? "block" : "none";
+    els.progressMarker.style.left = clampedPercent + "%";
+  }
+
   function renderStatus(data) {
     const stale = isStale(data);
     const online = Boolean(data.online) && !stale;
     const telemetry = data.telemetry || {};
     const mem = telemetry.mem || {};
+    const executionConfigs = getExecutionConfigs(data);
 
     if (online) {
       setBadge("ok", "Online");
@@ -83,10 +157,10 @@
     els.controllerState.textContent = data.controller_state || "-";
     els.maaStatus.textContent = data.maa_status || "-";
     els.currentUser.textContent = data.current_user || "-";
-    els.nextUser.textContent = data.next_user || "-";
+    els.nextUser.textContent = getDisplayNextUser(data, executionConfigs);
     els.progressText.textContent = `${data.step || 0} / ${data.total_steps || 0}`;
     els.progressPercent.textContent = `${Number(data.progress_percent || 0).toFixed(0)}%`;
-    els.progressBar.style.width = `${Math.max(0, Math.min(100, Number(data.progress_percent || 0)))}%`;
+    renderProgressTimeline(executionConfigs, data.progress_percent);
     els.lastUpdate.textContent = `Last update: ${formatDate(data.last_update)}`;
     els.lastUpdateChip.textContent = `Last update: ${formatDate(data.last_update)}`;
     els.connectionText.textContent = data.connection || "-";
