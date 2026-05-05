@@ -834,7 +834,8 @@
         throw new Error(`HTTP ${response.status}`);
       }
 
-      const data = await response.json();
+      const raw = await response.json();
+      const data = normalizeMaaDeskPayload(raw);
       state.lastGoodData = data;
       els.pollStatus.textContent = t("pollUpdated");
       if (els.pollStatusCompact) {
@@ -854,6 +855,58 @@
     } finally {
       window.clearTimeout(timeout);
     }
+  }
+
+  // Adapt MAA_Desk r2_publisher PublishedStatus (camelCase) to old dashboard format
+  function normalizeMaaDeskPayload(raw) {
+    // Already in old format: return as-is
+    if (raw.current_user !== undefined || raw.controller_state !== undefined) {
+      return raw;
+    }
+
+    var runList = Array.isArray(raw.run_list) ? raw.run_list : [];
+    var configs = runList.map(function (item) { return item.id; });
+    var completedCount = runList.filter(function (item) { return item.status === "completed"; }).length;
+    var skippedCount = runList.filter(function (item) { return item.status === "skipped"; }).length;
+    var currentIdx = runList.findIndex(function (item) { return item.status === "current"; });
+    var total = configs.length;
+    var step = currentIdx >= 0 ? currentIdx + 1 : (completedCount + skippedCount);
+
+    var phaseMap = {
+      idle:    { cs: "Idle",    pp: completedCount > 0 ? "completed" : "not_started" },
+      running: { cs: "Running", pp: "running" },
+      paused:  { cs: "Running", pp: "running" },
+      stopped: { cs: "Idle",    pp: "stopped" },
+    };
+    var pi = phaseMap[raw.phase] || { cs: raw.phase, pp: raw.phase };
+
+    var tel = raw.telemetry || {};
+    var memRaw = tel.memory || {};
+
+    return {
+      source:           "MAA_Desk",
+      controller_state: pi.cs,
+      maa_status:       raw.phase,
+      current_user:     raw.current_account || "",
+      next_user:        raw.next_account || "",
+      step:             step,
+      total_steps:      total,
+      progress_percent: raw.progress_percent != null ? raw.progress_percent : 0,
+      execution_configs: configs,
+      progress_phase:   pi.pp,
+      connection:       "Connected",
+      last_update:      raw.updated_at ? new Date(raw.updated_at).getTime() / 1000 : Date.now() / 1000,
+      last_error:       null,
+      telemetry: {
+        cpu: (tel.cpu && tel.cpu.value != null) ? tel.cpu.value : 0,
+        gpu: (tel.gpu && tel.gpu.value != null) ? tel.gpu.value : 0,
+        mem: {
+          percent:  memRaw.percentage != null ? memRaw.percentage : (memRaw.value || 0),
+          used_gb:  memRaw.value != null ? memRaw.value : 0,
+          total_gb: parseFloat(String(memRaw.unit || "").split("/")[1]) || 0,
+        },
+      },
+    };
   }
 
   function startPolling() {
