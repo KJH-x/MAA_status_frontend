@@ -1,0 +1,73 @@
+{
+  "phase": "idle",
+  "currentAccount": null,
+  "nextAccount": "8741",
+  "progressPercent": 0.0,
+  "runList": [
+    {
+      "id": "8741",
+      "status": "pending",
+      "locked": false,
+      "elapsedSeconds": null
+    },
+    {
+      "id": "2237",
+      "status": "pending",
+      "locked": false,
+      "elapsedSeconds": null
+    },
+    {
+      "id": "2704",
+      "status": "pending",
+      "locked": false,
+      "elapsedSeconds": null
+    },
+    {
+      "id": "1696",
+      "status": "pending",
+      "locked": false,
+      "elapsedSeconds": null
+    },
+    {
+      "id": "3039",
+      "status": "pending",
+      "locked": false,
+      "elapsedSeconds": null
+    },
+    {
+      "id": "5632",
+      "status": "pending",
+      "locked": false,
+      "elapsedSeconds": null
+    },
+    {
+      "id": "6142",
+      "status": "pending",
+      "locked": false,
+      "elapsedSeconds": null
+    }
+  ],
+  "telemetry": {
+    "cpu": {
+      "label": "CPU",
+      "value": 17.3,
+      "unit": "%",
+      "percentage": 17.3
+    },
+    "memory": {
+      "label": "Memory",
+      "value": 27.7,
+      "unit": "GB / 44.8GB",
+      "percentage": 61.8
+    },
+    "gpu": {
+      "label": "GPU",
+      "value": 20.2,
+      "unit": "%",
+      "percentage": 20.2
+    },
+    "updatedAt": "2026-05-06T09:56:57.425543100+08:00"
+  },
+  "updatedAt": "2026-05-06T01:56:20.131819700+08:00",
+  "publishedAt": "2026-05-06T09:56:57.425573600+08:00"
+}
