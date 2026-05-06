@@ -859,21 +859,18 @@
 
   // Adapt MAA_Desk r2_publisher PublishedStatus (camelCase) to old dashboard format
   function normalizeMaaDeskPayload(raw) {
-    // Already in old format (has current_user or controller_state): return as-is
-    if ((raw.current_user !== undefined && raw.current_user !== null) ||
+    if ((raw.currentUser !== undefined && raw.currentUser !== null) ||
         (raw.controller_state !== undefined && raw.controller_state !== null)) {
       return raw;
     }
 
-    // Extract run_list: accept array of objects {id,status,...} or array of strings
-    var rawList = Array.isArray(raw.run_list) ? raw.run_list : [];
+    var rawList = Array.isArray(raw.runList) ? raw.runList : [];
     var configs = rawList.map(function (item) {
       return typeof item === "string" ? item : (item && item.id ? String(item.id) : "");
     }).filter(Boolean);
 
-    // If run_list missing but old-style execution_configs present, use that
-    if (!configs.length && Array.isArray(raw.execution_configs) && raw.execution_configs.length) {
-      configs = raw.execution_configs.map(function (item) {
+    if (!configs.length && Array.isArray(raw.executionConfigs) && raw.executionConfigs.length) {
+      configs = raw.executionConfigs.map(function (item) {
         return String(item || "").trim();
       }).filter(Boolean);
     }
@@ -899,23 +896,23 @@
       source:           "MAA_Desk",
       controller_state: pi.cs,
       maa_status:       raw.phase,
-      current_user:     raw.current_account || raw.current_user || "",
-      next_user:        raw.next_account || raw.next_user || "",
+      current_user:     raw.currentAccount || raw.currentUser || "",
+      next_user:        raw.nextAccount || raw.nextUser || "",
       step:             step,
       total_steps:      total,
-      progress_percent: raw.progress_percent != null ? Number(raw.progress_percent) : 0,
+      progress_percent: raw.progressPercent != null ? Number(raw.progressPercent) : 0,
       execution_configs: configs,
       progress_phase:   pi.pp,
       connection:       raw.connection || "Connected",
-      last_update:      raw.updated_at ? new Date(raw.updated_at).getTime() / 1000 : (raw.last_update || Date.now() / 1000),
-      last_error:       raw.last_error || null,
+      last_update:      raw.updatedAt ? new Date(raw.updatedAt).getTime() / 1000 : (raw.lastUpdate || Date.now() / 1000),
+      last_error:       raw.lastError || null,
       telemetry: {
         cpu: (tel.cpu && tel.cpu.value != null) ? tel.cpu.value : (typeof tel.cpu === "number" ? tel.cpu : 0),
         gpu: (tel.gpu && tel.gpu.value != null) ? tel.gpu.value : (typeof tel.gpu === "number" ? tel.gpu : 0),
         mem: {
           percent:  memRaw.percentage != null ? memRaw.percentage : (typeof memRaw.percent === "number" ? memRaw.percent : (memRaw.value || 0)),
-          used_gb:  memRaw.value != null ? memRaw.value : (typeof memRaw.used_gb === "number" ? memRaw.used_gb : 0),
-          total_gb: typeof memRaw.total_gb === "number" ? memRaw.total_gb : (parseFloat(String(memRaw.unit || "").split("/")[1]) || 0),
+          used_gb:  memRaw.value != null ? memRaw.value : (typeof memRaw.usedGb === "number" ? memRaw.usedGb : 0),
+          total_gb: typeof memRaw.totalGb === "number" ? memRaw.totalGb : (parseFloat(String(memRaw.unit || "").split("/")[1]) || 0),
         },
       },
     };
