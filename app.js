@@ -857,21 +857,97 @@
     }
   }
 
+  function isPlainObject(value) {
+    return value != null && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function hasLegacyDashboardShape(raw) {
+    if (!isPlainObject(raw)) {
+      return false;
+    }
+
+    return raw.current_user !== undefined ||
+      raw.controller_state !== undefined ||
+      raw.total_steps !== undefined ||
+      raw.progress_percent !== undefined ||
+      raw.execution_configs !== undefined ||
+      raw.last_update !== undefined;
+  }
+
+  function getConfigLabel(item) {
+    if (typeof item === "string" || typeof item === "number") {
+      return String(item).trim();
+    }
+    if (!isPlainObject(item)) {
+      return "";
+    }
+
+    return String(
+      item.id ??
+      item.name ??
+      item.account ??
+      item.user ??
+      item.label ??
+      ""
+    ).trim();
+  }
+
+  function parseTimestampSeconds(value) {
+    if (value == null || value === "") {
+      return null;
+    }
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      if (value > 1e12) {
+        return value / 1000;
+      }
+      if (value > 0) {
+        return value;
+      }
+      return null;
+    }
+
+    const numericValue = Number(value);
+    if (Number.isFinite(numericValue) && String(value).trim() !== "") {
+      return parseTimestampSeconds(numericValue);
+    }
+
+    const parsedMs = Date.parse(String(value));
+    if (Number.isFinite(parsedMs)) {
+      return parsedMs / 1000;
+    }
+
+    return null;
+  }
+
+  function getLatestTimestampSeconds() {
+    const values = Array.prototype.slice.call(arguments)
+      .map(parseTimestampSeconds)
+      .filter(function (value) {
+        return Number.isFinite(value) && value > 0;
+      });
+
+    if (!values.length) {
+      return Math.floor(Date.now() / 1000);
+    }
+
+    return Math.max.apply(null, values);
+  }
+
   // Adapt MAA_Desk r2_publisher PublishedStatus (camelCase) to old dashboard format
   function normalizeMaaDeskPayload(raw) {
-    if ((raw.currentUser !== undefined && raw.currentUser !== null) ||
-        (raw.controller_state !== undefined && raw.controller_state !== null)) {
+    if (hasLegacyDashboardShape(raw)) {
       return raw;
     }
 
     var rawList = Array.isArray(raw.runList) ? raw.runList : [];
     var configs = rawList.map(function (item) {
-      return typeof item === "string" ? item : (item && item.id ? String(item.id) : "");
+      return getConfigLabel(item);
     }).filter(Boolean);
 
     if (!configs.length && Array.isArray(raw.executionConfigs) && raw.executionConfigs.length) {
       configs = raw.executionConfigs.map(function (item) {
-        return String(item || "").trim();
+        return getConfigLabel(item);
       }).filter(Boolean);
     }
 
@@ -891,6 +967,16 @@
 
     var tel = raw.telemetry || {};
     var memRaw = tel.memory || {};
+    var lastUpdate = getLatestTimestampSeconds(
+      raw.publishedAt,
+      tel.updatedAt,
+      raw.updatedAt,
+      raw.lastUpdatedAt,
+      raw.lastUpdate
+    );
+    var progressPercent = raw.progressPercent != null
+      ? Number(raw.progressPercent)
+      : (total > 0 ? (step / total) * 100 : 0);
 
     return {
       source:           "MAA_Desk",
@@ -900,11 +986,11 @@
       next_user:        raw.nextAccount || raw.nextUser || "",
       step:             step,
       total_steps:      total,
-      progress_percent: raw.progressPercent != null ? Number(raw.progressPercent) : 0,
+      progress_percent: Number.isFinite(progressPercent) ? progressPercent : 0,
       execution_configs: configs,
       progress_phase:   pi.pp,
-      connection:       raw.connection || "Connected",
-      last_update:      raw.updatedAt ? new Date(raw.updatedAt).getTime() / 1000 : (raw.lastUpdate || Date.now() / 1000),
+      connection:       raw.connection || raw.connectionState || "Connected",
+      last_update:      lastUpdate,
       last_error:       raw.lastError || null,
       telemetry: {
         cpu: (tel.cpu && tel.cpu.value != null) ? tel.cpu.value : (typeof tel.cpu === "number" ? tel.cpu : 0),
