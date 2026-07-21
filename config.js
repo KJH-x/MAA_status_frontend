@@ -1,5 +1,5 @@
 window.DASHBOARD_CONFIG = {
-  statusUrl: "https://r2.nsapi.top/latest/status.json",
+  statusUrl: "/api/status",
   pollIntervalMs: 5000,
   staleThresholdSec: 30,
   requestTimeoutMs: 5000,
