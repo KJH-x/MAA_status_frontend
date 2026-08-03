@@ -98,10 +98,11 @@
       configs = raw.executionConfigs.map(getConfigLabel).filter(Boolean);
     }
 
-    var completedCount = rawList.filter(function (item) { return item && item.status === "completed"; }).length;
-    var skippedCount = rawList.filter(function (item) { return item && item.status === "skipped"; }).length;
-    var currentIdx = rawList.findIndex(function (item) { return item && item.status === "current"; });
-    var total = configs.length;
+    var executionList = rawList.filter(function (item) { return item && item.status !== "excluded"; });
+    var completedCount = executionList.filter(function (item) { return item.status === "completed"; }).length;
+    var skippedCount = executionList.filter(function (item) { return item.status === "skipped"; }).length;
+    var currentIdx = executionList.findIndex(function (item) { return item.status === "current"; });
+    var total = executionList.length || configs.length;
     var step = currentIdx >= 0 ? currentIdx + 1 : completedCount + skippedCount;
     var phaseMap = {
       idle: { cs: "Idle", pp: completedCount > 0 ? "completed" : "not_started" },

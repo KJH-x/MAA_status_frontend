@@ -68,3 +68,19 @@ test("legacy dashboard payload passes through unchanged", () => {
   const legacy = { controller_state: "Idle", last_update: 123 };
   assert.strictEqual(normalizeMaaDeskPayload(legacy, { nowSeconds: 456 }), legacy);
 });
+
+test("excluded accounts remain visible but do not affect execution progress", () => {
+  const data = normalizeMaaDeskPayload(payload({
+    phase: "running",
+    progressPercent: undefined,
+    runList: [
+      { id: "not-selected", status: "excluded" },
+      { id: "selected", status: "current" }
+    ]
+  }), { nowSeconds: 10_001 });
+
+  assert.deepEqual(data.execution_configs, ["not-selected", "selected"]);
+  assert.equal(data.total_steps, 1);
+  assert.equal(data.step, 1);
+  assert.equal(data.progress_percent, 100);
+});
