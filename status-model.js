@@ -74,6 +74,13 @@
     return timestamps.length ? Math.max.apply(null, timestamps) : fallback;
   }
 
+  function normalizeBlockReasonCategory(value) {
+    var category = String(value || "").trim().toLowerCase();
+    return ["configuration", "launcher", "persistence", "recovery", "unknown"].indexOf(category) >= 0
+      ? category
+      : "unknown";
+  }
+
   function normalizeMaaDeskPayload(raw, options) {
     if (hasLegacyDashboardShape(raw)) {
       return raw;
@@ -92,7 +99,8 @@
       fallbackFreshnessTtl = 30;
     }
 
-    var rawList = Array.isArray(raw.runList) ? raw.runList : [];
+    var hasRunList = Array.isArray(raw.runList);
+    var rawList = hasRunList ? raw.runList : [];
     var configs = rawList.map(getConfigLabel).filter(Boolean);
     if (!configs.length && Array.isArray(raw.executionConfigs) && raw.executionConfigs.length) {
       configs = raw.executionConfigs.map(getConfigLabel).filter(Boolean);
@@ -102,7 +110,7 @@
     var completedCount = executionList.filter(function (item) { return item.status === "completed"; }).length;
     var skippedCount = executionList.filter(function (item) { return item.status === "skipped"; }).length;
     var currentIdx = executionList.findIndex(function (item) { return item.status === "current"; });
-    var total = executionList.length || configs.length;
+    var total = hasRunList ? executionList.length : configs.length;
     var step = currentIdx >= 0 ? currentIdx + 1 : completedCount + skippedCount;
     var phaseMap = {
       idle: { cs: "Idle", pp: completedCount > 0 ? "completed" : "not_started" },
@@ -112,7 +120,13 @@
       failed: { cs: "Failed", pp: "failed" },
       completed: { cs: "Idle", pp: "completed" }
     };
-    var phase = phaseMap[raw.phase] || { cs: raw.phase, pp: raw.phase };
+    var schedulerBlocked = raw.blocked === true;
+    var blockReasonCategory = schedulerBlocked
+      ? normalizeBlockReasonCategory(raw.blockReasonCategory)
+      : null;
+    var phase = schedulerBlocked
+      ? { cs: "Blocked", pp: "failed" }
+      : (phaseMap[raw.phase] || { cs: raw.phase, pp: raw.phase });
     var telemetry = raw.telemetry || {};
     var memory = telemetry.memory || {};
     var publishedAt = parseTimestampSeconds(raw.publishedAt);
@@ -125,14 +139,17 @@
     }
     var transportStale = !(Number.isFinite(publishedAt) && publishedAt > 0) ||
       nowSeconds - publishedAt > freshnessTtl;
+    var finishedCount = completedCount + skippedCount;
     var progressPercent = raw.progressPercent != null
       ? Number(raw.progressPercent)
-      : (total > 0 ? step / total * 100 : 0);
+      : (total > 0 ? finishedCount / total * 100 : 0);
 
     return {
       source: "MAA_Desk",
       controller_state: phase.cs,
-      maa_status: raw.phase,
+      maa_status: schedulerBlocked ? "blocked" : raw.phase,
+      scheduler_blocked: schedulerBlocked,
+      block_reason_category: blockReasonCategory,
       current_user: raw.currentAccount || raw.currentUser || "",
       next_user: raw.nextAccount || raw.nextUser || "",
       step: step,
@@ -157,8 +174,17 @@
     };
   }
 
+  function formatMaaStatus(data) {
+    if (!data || data.scheduler_blocked !== true) {
+      return data && data.maa_status ? String(data.maa_status) : "-";
+    }
+    var category = normalizeBlockReasonCategory(data.block_reason_category);
+    return "blocked · " + category;
+  }
+
   return {
     normalizeMaaDeskPayload: normalizeMaaDeskPayload,
+    formatMaaStatus: formatMaaStatus,
     parseTimestampSeconds: parseTimestampSeconds
   };
 });

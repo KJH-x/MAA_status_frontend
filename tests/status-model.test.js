@@ -1,7 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 
-const { normalizeMaaDeskPayload } = require("../status-model.js");
+const { formatMaaStatus, normalizeMaaDeskPayload } = require("../status-model.js");
 
 function payload(overrides = {}) {
   return {
@@ -10,6 +12,8 @@ function payload(overrides = {}) {
     nextAccount: "synthetic-next",
     progressPercent: 0,
     runList: [{ id: "synthetic-next", status: "pending", locked: false, elapsedSeconds: null }],
+    blocked: false,
+    blockReasonCategory: null,
     telemetry: {
       cpu: { value: 1 },
       memory: { value: 2, percentage: 3, unit: "GB / 4GB" },
@@ -82,5 +86,79 @@ test("excluded accounts remain visible but do not affect execution progress", ()
   assert.deepEqual(data.execution_configs, ["not-selected", "selected"]);
   assert.equal(data.total_steps, 1);
   assert.equal(data.step, 1);
-  assert.equal(data.progress_percent, 100);
+  assert.equal(data.progress_percent, 0);
+});
+
+test("an all-excluded snapshot has a zero execution denominator", () => {
+  const raw = payload({
+    runList: [
+      { id: "not-selected-a", status: "excluded", locked: true, elapsedSeconds: null },
+      { id: "not-selected-b", status: "excluded", locked: true, elapsedSeconds: null }
+    ]
+  });
+  delete raw.progressPercent;
+
+  const data = normalizeMaaDeskPayload(raw, { nowSeconds: 10_001 });
+
+  assert.deepEqual(data.execution_configs, ["not-selected-a", "not-selected-b"]);
+  assert.equal(data.total_steps, 0);
+  assert.equal(data.step, 0);
+  assert.equal(data.progress_percent, 0);
+});
+
+test("a payload without runList keeps the executionConfigs compatibility fallback", () => {
+  const raw = payload({
+    runList: undefined,
+    executionConfigs: ["legacy-a", "legacy-b"],
+    progressPercent: undefined
+  });
+
+  const data = normalizeMaaDeskPayload(raw, { nowSeconds: 10_001 });
+
+  assert.deepEqual(data.execution_configs, ["legacy-a", "legacy-b"]);
+  assert.equal(data.total_steps, 2);
+  assert.equal(data.progress_percent, 0);
+});
+
+test("blocked payload exposes only a closed public reason category", () => {
+  const data = normalizeMaaDeskPayload(payload({
+    phase: "stopped",
+    blocked: true,
+    blockReasonCategory: "persistence",
+    blockReason: "failed at C:\\private\\temp_run.json",
+    blockedPlan: { id: "must-not-be-forwarded" }
+  }), { nowSeconds: 10_001 });
+
+  assert.equal(data.controller_state, "Blocked");
+  assert.equal(data.maa_status, "blocked");
+  assert.equal(data.progress_phase, "failed");
+  assert.equal(data.scheduler_blocked, true);
+  assert.equal(data.block_reason_category, "persistence");
+  assert.equal(formatMaaStatus(data), "blocked · persistence");
+  assert.equal(Object.hasOwn(data, "blockReason"), false);
+  assert.equal(Object.hasOwn(data, "blockedPlan"), false);
+});
+
+test("blocked payload rejects arbitrary reason categories", () => {
+  const data = normalizeMaaDeskPayload(payload({
+    blocked: true,
+    blockReasonCategory: "C:\\private\\manifest.json"
+  }), { nowSeconds: 10_001 });
+
+  assert.equal(data.block_reason_category, "unknown");
+  assert.equal(formatMaaStatus(data), "blocked · unknown");
+});
+
+test("checked-in fixture includes the sanitized blocked contract", () => {
+  const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "test_status.json"), "utf8"));
+  const publishedAt = Date.parse(fixture.publishedAt) / 1000;
+  const data = normalizeMaaDeskPayload(fixture, { nowSeconds: publishedAt + 1 });
+
+  assert.equal(typeof fixture.blocked, "boolean");
+  assert.equal(Object.hasOwn(fixture, "blockReasonCategory"), true);
+  assert.equal(data.scheduler_blocked, false);
+  assert.equal(data.block_reason_category, null);
+  assert.deepEqual(data.execution_configs, ["synthetic-excluded", "synthetic-selected"]);
+  assert.equal(data.total_steps, 1);
+  assert.equal(data.progress_percent, 0);
 });

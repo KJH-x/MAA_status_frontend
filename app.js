@@ -746,9 +746,10 @@
     if (els.controllerStateCompact) {
       els.controllerStateCompact.textContent = data.controller_state || "-";
     }
-    els.maaStatus.textContent = data.maa_status || "-";
+    const maaStatusText = statusModel.formatMaaStatus(data);
+    els.maaStatus.textContent = maaStatusText;
     if (els.maaStatusCompact) {
-      els.maaStatusCompact.textContent = data.maa_status || "-";
+      els.maaStatusCompact.textContent = maaStatusText;
     }
     els.currentUser.textContent = getDisplayCurrentUser(data);
     if (els.currentUserNote) {

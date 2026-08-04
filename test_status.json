@@ -1,49 +1,23 @@
 {
-  "phase": "idle",
-  "currentAccount": null,
-  "nextAccount": "8741",
+  "phase": "running",
+  "currentAccount": "synthetic-selected",
+  "nextAccount": null,
   "progressPercent": 0.0,
+  "activePlanKind": "single_account",
+  "queuedPlanCount": 0,
+  "blocked": false,
+  "blockReasonCategory": null,
   "runList": [
     {
-      "id": "8741",
-      "status": "pending",
-      "locked": false,
+      "id": "synthetic-excluded",
+      "status": "excluded",
+      "locked": true,
       "elapsedSeconds": null
     },
     {
-      "id": "2237",
-      "status": "pending",
-      "locked": false,
-      "elapsedSeconds": null
-    },
-    {
-      "id": "2704",
-      "status": "pending",
-      "locked": false,
-      "elapsedSeconds": null
-    },
-    {
-      "id": "1696",
-      "status": "pending",
-      "locked": false,
-      "elapsedSeconds": null
-    },
-    {
-      "id": "3039",
-      "status": "pending",
-      "locked": false,
-      "elapsedSeconds": null
-    },
-    {
-      "id": "5632",
-      "status": "pending",
-      "locked": false,
-      "elapsedSeconds": null
-    },
-    {
-      "id": "6142",
-      "status": "pending",
-      "locked": false,
+      "id": "synthetic-selected",
+      "status": "current",
+      "locked": true,
       "elapsedSeconds": null
     }
   ],
