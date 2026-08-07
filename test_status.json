@@ -5,6 +5,29 @@
   "progressPercent": 0.0,
   "activePlanKind": "single_account",
   "queuedPlanCount": 0,
+  "activePlan": {
+    "kind": "single_account",
+    "source": "manual",
+    "targetAccounts": [
+      "synthetic-selected"
+    ],
+    "withoutFight": false,
+    "hasTemporaryActStage": false,
+    "additionalRun": false
+  },
+  "pendingPlans": [
+    {
+      "kind": "full_round",
+      "source": "cron",
+      "targetAccounts": [
+        "synthetic-pending-a",
+        "synthetic-pending-b"
+      ],
+      "withoutFight": true,
+      "hasTemporaryActStage": true,
+      "additionalRun": false
+    }
+  ],
   "blocked": false,
   "blockReasonCategory": null,
   "runList": [

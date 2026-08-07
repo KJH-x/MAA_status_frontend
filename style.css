@@ -1008,3 +1008,59 @@ body[data-theme="light"] .progress-marker::before {
     font-size: 1.08rem;
   }
 }
+
+/* Queue / per-account status card (added by task 19-D) */
+.card-queue {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.queue-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.queue-value {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.account-status-list,
+.pending-queue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.account-status-item,
+.pending-queue-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  border: 1px solid color-mix(in srgb, var(--surface) 72%, #888888 28%);
+}
+
+.account-status-name {
+  font-weight: 600;
+}
+
+.account-status-meta {
+  margin-left: auto;
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.pending-queue-position {
+  min-width: 64px;
+  text-align: center;
+}

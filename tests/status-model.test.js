@@ -149,6 +149,81 @@ test("blocked payload rejects arbitrary reason categories", () => {
   assert.equal(formatMaaStatus(data), "blocked · unknown");
 });
 
+test("active plan and pending plans normalize with whitelist-only fields", () => {
+  const raw = payload({
+    activePlan: {
+      kind: "single_account",
+      source: "manual",
+      targetAccounts: ["synthetic-current"],
+      withoutFight: true,
+      hasTemporaryActStage: false,
+      additionalRun: false,
+      accountSnapshot: ["synthetic-hidden"],
+      scheduleId: "must-not-leak",
+      id: "must-not-leak"
+    },
+    pendingPlans: [
+      {
+        kind: "full_round",
+        source: "cron",
+        targetAccounts: ["synthetic-a", "synthetic-b"],
+        withoutFight: true,
+        hasTemporaryActStage: true,
+        additionalRun: true,
+        createdAt: "must-not-leak"
+      }
+    ]
+  });
+
+  const data = normalizeMaaDeskPayload(raw, { nowSeconds: 10_001 });
+
+  assert.deepEqual(data.active_plan, {
+    kind: "single_account",
+    source: "manual",
+    targetAccounts: ["synthetic-current"],
+    withoutFight: true,
+    hasTemporaryActStage: false,
+    additionalRun: false
+  });
+  assert.deepEqual(data.pending_plans, [{
+    position: 1,
+    kind: "full_round",
+    source: "cron",
+    targetAccounts: ["synthetic-a", "synthetic-b"],
+    withoutFight: true,
+    hasTemporaryActStage: true,
+    additionalRun: true
+  }]);
+  assert.equal(Object.hasOwn(data.active_plan, "accountSnapshot"), false);
+  assert.equal(Object.hasOwn(data.active_plan, "scheduleId"), false);
+  assert.equal(Object.hasOwn(data.active_plan, "id"), false);
+  assert.equal(Object.hasOwn(data.pending_plans[0], "createdAt"), false);
+});
+
+test("run_list keeps per-account status locked and elapsed seconds", () => {
+  const raw = payload({
+    runList: [
+      { id: "synthetic-alpha", status: "current", locked: true, elapsedSeconds: 125 },
+      { id: "synthetic-beta", status: "pending", locked: false, elapsedSeconds: null }
+    ]
+  });
+
+  const data = normalizeMaaDeskPayload(raw, { nowSeconds: 10_001 });
+
+  assert.deepEqual(data.run_list, [
+    { id: "synthetic-alpha", status: "current", locked: true, elapsedSeconds: 125 },
+    { id: "synthetic-beta", status: "pending", locked: false, elapsedSeconds: null }
+  ]);
+});
+
+test("missing plan summaries fall back to empty queue without leaking raw fields", () => {
+  const data = normalizeMaaDeskPayload(payload(), { nowSeconds: 10_001 });
+
+  assert.equal(data.active_plan, null);
+  assert.deepEqual(data.pending_plans, []);
+  assert.equal(data.queued_plan_count, 0);
+});
+
 test("checked-in fixture includes the sanitized blocked contract", () => {
   const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "test_status.json"), "utf8"));
   const publishedAt = Date.parse(fixture.publishedAt) / 1000;
@@ -161,4 +236,18 @@ test("checked-in fixture includes the sanitized blocked contract", () => {
   assert.deepEqual(data.execution_configs, ["synthetic-excluded", "synthetic-selected"]);
   assert.equal(data.total_steps, 1);
   assert.equal(data.progress_percent, 0);
+  assert.deepEqual(data.active_plan, {
+    kind: "single_account",
+    source: "manual",
+    targetAccounts: ["synthetic-selected"],
+    withoutFight: false,
+    hasTemporaryActStage: false,
+    additionalRun: false
+  });
+  assert.equal(data.pending_plans.length, 1);
+  assert.equal(data.pending_plans[0].position, 1);
+  assert.deepEqual(data.pending_plans[0].targetAccounts, [
+    "synthetic-pending-a",
+    "synthetic-pending-b"
+  ]);
 });

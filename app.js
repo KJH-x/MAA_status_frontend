@@ -80,7 +80,31 @@
       themeLight: "切换到：浅色",
       themeDark: "切换到：深色",
       themeLightAria: "切换到浅色主题",
-      themeDarkAria: "切换到深色主题"
+      themeDarkAria: "切换到深色主题",
+      queueTitle: "队列",
+      activePlanLabel: "当前计划",
+      accountStatusLabel: "账号状态",
+      pendingQueueLabel: "等待队列",
+      noPending: "暂无等待计划",
+      planSingle: "单账号",
+      planFullRound: "整轮",
+      sourceManual: "手动",
+      sourceCron: "计划",
+      sourceOneBot: "OneBot",
+      sourceLlm: "LLM",
+      sourceHttp: "HTTP",
+      sourceRecovery: "恢复",
+      withoutFight: "无战斗",
+      tempAct: "临时关卡",
+      extraRun: "额外运行",
+      positionPrefix: "位置 {value}",
+      statusPending: "等待",
+      statusCurrent: "执行中",
+      statusCompleted: "完成",
+      statusSkipped: "已跳过",
+      statusExcluded: "未选中",
+      lockedLabel: "锁定",
+      elapsedLabel: "{value} 分钟"
     },
     en: {
       heroEyebrow: "MAA OneBot Adapter",
@@ -139,7 +163,31 @@
       themeLight: "Switch to: Light",
       themeDark: "Switch to: Dark",
       themeLightAria: "Switch to light theme",
-      themeDarkAria: "Switch to dark theme"
+      themeDarkAria: "Switch to dark theme",
+      queueTitle: "Queue",
+      activePlanLabel: "Active Plan",
+      accountStatusLabel: "Accounts",
+      pendingQueueLabel: "Pending Queue",
+      noPending: "No pending plans",
+      planSingle: "Single",
+      planFullRound: "Full Round",
+      sourceManual: "Manual",
+      sourceCron: "Cron",
+      sourceOneBot: "OneBot",
+      sourceLlm: "LLM",
+      sourceHttp: "HTTP",
+      sourceRecovery: "Recovery",
+      withoutFight: "No Fight",
+      tempAct: "Temp Stage",
+      extraRun: "Extra Run",
+      positionPrefix: "Pos {value}",
+      statusPending: "Pending",
+      statusCurrent: "Current",
+      statusCompleted: "Completed",
+      statusSkipped: "Skipped",
+      statusExcluded: "Excluded",
+      lockedLabel: "Locked",
+      elapsedLabel: "{value} min"
     },
     "zh-TW": {
       heroEyebrow: "MAA OneBot Adapter",
@@ -198,7 +246,31 @@
       themeLight: "切換到：淺色",
       themeDark: "切換到：深色",
       themeLightAria: "切換到淺色主題",
-      themeDarkAria: "切換到深色主題"
+      themeDarkAria: "切換到深色主題",
+      queueTitle: "佇列",
+      activePlanLabel: "目前計畫",
+      accountStatusLabel: "帳號狀態",
+      pendingQueueLabel: "待執行佇列",
+      noPending: "尚無待執行計畫",
+      planSingle: "單帳號",
+      planFullRound: "整輪",
+      sourceManual: "手動",
+      sourceCron: "排程",
+      sourceOneBot: "OneBot",
+      sourceLlm: "LLM",
+      sourceHttp: "HTTP",
+      sourceRecovery: "復原",
+      withoutFight: "無戰鬥",
+      tempAct: "臨時關卡",
+      extraRun: "額外執行",
+      positionPrefix: "位置 {value}",
+      statusPending: "等待",
+      statusCurrent: "執行中",
+      statusCompleted: "完成",
+      statusSkipped: "已跳過",
+      statusExcluded: "未選中",
+      lockedLabel: "鎖定",
+      elapsedLabel: "{value} 分鐘"
     },
     ja: {
       heroEyebrow: "MAA OneBot Adapter",
@@ -257,7 +329,31 @@
       themeLight: "切り替え先：ライト",
       themeDark: "切り替え先：ダーク",
       themeLightAria: "ライトテーマに切り替え",
-      themeDarkAria: "ダークテーマに切り替え"
+      themeDarkAria: "ダークテーマに切り替え",
+      queueTitle: "キュー",
+      activePlanLabel: "実行中プラン",
+      accountStatusLabel: "アカウント状態",
+      pendingQueueLabel: "待機キュー",
+      noPending: "待機中のプランはありません",
+      planSingle: "単一",
+      planFullRound: "フルラウンド",
+      sourceManual: "手動",
+      sourceCron: "スケジュール",
+      sourceOneBot: "OneBot",
+      sourceLlm: "LLM",
+      sourceHttp: "HTTP",
+      sourceRecovery: "リカバリ",
+      withoutFight: "戦闘なし",
+      tempAct: "臨時ステージ",
+      extraRun: "追加実行",
+      positionPrefix: "位置 {value}",
+      statusPending: "待機",
+      statusCurrent: "実行中",
+      statusCompleted: "完了",
+      statusSkipped: "スキップ",
+      statusExcluded: "対象外",
+      lockedLabel: "ロック",
+      elapsedLabel: "{value} 分"
     }
   };
 
@@ -293,6 +389,14 @@
     progressSegments: document.getElementById("progress-segments"),
     progressMarker: document.getElementById("progress-marker"),
     lastUpdate: document.getElementById("last-update"),
+    queueTitle: document.getElementById("queue-title"),
+    activePlanLabel: document.getElementById("active-plan-label"),
+    accountStatusLabel: document.getElementById("account-status-label"),
+    pendingQueueLabel: document.getElementById("pending-queue-label"),
+    activePlanText: document.getElementById("active-plan-text"),
+    accountStatusList: document.getElementById("account-status-list"),
+    pendingQueueList: document.getElementById("pending-queue-list"),
+    pendingQueueEmpty: document.getElementById("pending-queue-empty"),
     connectionText: document.getElementById("connection-text"),
     connectionTextCompact: document.getElementById("connection-text-compact"),
     connectionLabel: document.getElementById("connection-label"),
@@ -389,6 +493,10 @@
     setTextContent(els.gpuLabel, t("gpuLabel"));
     setTextContent(els.gpuNote, t("gpuNote"));
     setTextContent(els.memoryLabel, t("memoryLabel"));
+    setTextContent(els.queueTitle, t("queueTitle"));
+    setTextContent(els.activePlanLabel, t("activePlanLabel"));
+    setTextContent(els.accountStatusLabel, t("accountStatusLabel"));
+    setTextContent(els.pendingQueueLabel, t("pendingQueueLabel"));
 
     if (els.progressTrack) {
       els.progressTrack.setAttribute("aria-label", t("progressTrackAria"));
@@ -736,6 +844,122 @@
     });
   }
 
+  function planKindLabel(kind) {
+    if (kind === "single_account") {
+      return t("planSingle");
+    }
+    if (kind === "full_round") {
+      return t("planFullRound");
+    }
+    return kind || "-";
+  }
+
+  function planSourceLabel(source) {
+    const map = {
+      manual: "sourceManual",
+      cron: "sourceCron",
+      one_bot: "sourceOneBot",
+      llm: "sourceLlm",
+      http: "sourceHttp",
+      recovery: "sourceRecovery"
+    };
+    return map[source] ? t(map[source]) : (source || "-");
+  }
+
+  function formatPlanSummary(plan) {
+    if (!plan) {
+      return "-";
+    }
+    const targets = plan.targetAccounts && plan.targetAccounts.length
+      ? plan.targetAccounts.join(", ")
+      : "-";
+    const parts = [planKindLabel(plan.kind), planSourceLabel(plan.source), targets];
+    if (plan.withoutFight) {
+      parts.push(t("withoutFight"));
+    }
+    if (plan.hasTemporaryActStage) {
+      parts.push(t("tempAct"));
+    }
+    if (plan.additionalRun) {
+      parts.push(t("extraRun"));
+    }
+    return parts.join(" · ");
+  }
+
+  function renderAccountStatusList(data) {
+    if (!els.accountStatusList) {
+      return;
+    }
+    els.accountStatusList.textContent = "";
+    const items = data.run_list || [];
+    if (!items.length) {
+      els.accountStatusList.textContent = t("none");
+      return;
+    }
+    items.forEach(function (item) {
+      const li = document.createElement("li");
+      li.className = "account-status-item";
+      const status = String(item.status || "");
+      const statusKey = "status" + status.charAt(0).toUpperCase() + status.slice(1);
+      const label = status && t(statusKey) !== statusKey ? t(statusKey) : (status || "-");
+      const chip = document.createElement("span");
+      const badgeKind = status === "current" || status === "completed"
+        ? "ok"
+        : (status === "skipped" ? "warn" : "neutral");
+      chip.className = "badge account-status-badge badge-" + badgeKind;
+      chip.textContent = label;
+      li.appendChild(chip);
+      const name = document.createElement("strong");
+      name.className = "account-status-name";
+      name.textContent = item.id || "-";
+      li.appendChild(name);
+      const meta = document.createElement("span");
+      meta.className = "account-status-meta";
+      const metaParts = [];
+      if (item.locked) {
+        metaParts.push(t("lockedLabel"));
+      }
+      if (Number.isFinite(item.elapsedSeconds) && item.elapsedSeconds > 0) {
+        metaParts.push(t("elapsedLabel", {
+          value: Math.max(1, Math.round(item.elapsedSeconds / 60))
+        }));
+      }
+      meta.textContent = metaParts.join(" · ");
+      li.appendChild(meta);
+    });
+  }
+
+  function renderActivePlan(data) {
+    if (!els.activePlanText) {
+      return;
+    }
+    els.activePlanText.textContent = formatPlanSummary(data.active_plan);
+  }
+
+  function renderPendingQueue(data) {
+    if (!els.pendingQueueList || !els.pendingQueueEmpty) {
+      return;
+    }
+    els.pendingQueueList.textContent = "";
+    const plans = data.pending_plans || [];
+    if (!plans.length) {
+      els.pendingQueueEmpty.hidden = false;
+      return;
+    }
+    els.pendingQueueEmpty.hidden = true;
+    plans.forEach(function (plan) {
+      const li = document.createElement("li");
+      li.className = "pending-queue-item";
+      const position = document.createElement("span");
+      position.className = "meta-chip pending-queue-position";
+      position.textContent = t("positionPrefix", { value: plan.position });
+      li.appendChild(position);
+      const text = document.createElement("span");
+      text.textContent = formatPlanSummary(plan);
+      li.appendChild(text);
+    });
+  }
+
   function renderStatus(data) {
     const telemetry = data.telemetry || {};
     const mem = telemetry.mem || {};
@@ -775,6 +999,9 @@
     renderRing(document.querySelector(".gpu-ring"), els.gpuValue, telemetry.gpu, "%");
     renderRing(document.querySelector(".mem-ring"), els.memValue, mem.percent, "%");
     els.memDetail.textContent = `${Number(mem.used_gb || 0).toFixed(1)} / ${Number(mem.total_gb || 0).toFixed(1)} GB`;
+    renderAccountStatusList(data);
+    renderActivePlan(data);
+    renderPendingQueue(data);
   }
 
   function renderRing(shell, valueEl, rawValue, suffix) {

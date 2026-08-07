@@ -81,6 +81,22 @@
       : "unknown";
   }
 
+  function normalizePlanSummary(rawPlan) {
+    if (!isPlainObject(rawPlan)) {
+      return null;
+    }
+    return {
+      kind: String(rawPlan.kind || ""),
+      source: String(rawPlan.source || ""),
+      targetAccounts: (Array.isArray(rawPlan.targetAccounts) ? rawPlan.targetAccounts : [])
+        .map(String)
+        .filter(Boolean),
+      withoutFight: rawPlan.withoutFight === true,
+      hasTemporaryActStage: rawPlan.hasTemporaryActStage === true,
+      additionalRun: rawPlan.additionalRun === true
+    };
+  }
+
   function normalizeMaaDeskPayload(raw, options) {
     if (hasLegacyDashboardShape(raw)) {
       return raw;
@@ -143,6 +159,25 @@
     var progressPercent = raw.progressPercent != null
       ? Number(raw.progressPercent)
       : (total > 0 ? finishedCount / total * 100 : 0);
+    var activePlan = normalizePlanSummary(raw.activePlan);
+    var pendingPlans = (Array.isArray(raw.pendingPlans) ? raw.pendingPlans : [])
+      .map(normalizePlanSummary)
+      .filter(Boolean)
+      .map(function (plan, index) {
+        return Object.assign({ position: index + 1 }, plan);
+      });
+    var runList = rawList.map(function (item) {
+      return {
+        id: getConfigLabel(item),
+        status: String(item && item.status || ""),
+        locked: !!(item && item.locked),
+        elapsedSeconds: item && item.elapsedSeconds != null
+          ? Number(item.elapsedSeconds)
+          : null
+      };
+    }).filter(function (item) {
+      return item.id !== "";
+    });
 
     return {
       source: "MAA_Desk",
@@ -156,6 +191,10 @@
       total_steps: total,
       progress_percent: Number.isFinite(progressPercent) ? progressPercent : 0,
       execution_configs: configs,
+      run_list: runList,
+      active_plan: activePlan,
+      pending_plans: pendingPlans,
+      queued_plan_count: Number(raw.queuedPlanCount) || 0,
       progress_phase: phase.pp,
       connection: raw.connection || raw.connectionState || "Connected",
       last_update: lastUpdate,
