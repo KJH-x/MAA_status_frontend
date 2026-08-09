@@ -13,7 +13,6 @@
   --track: #334155;
   --panel-tint: #11172c;
   --chip-bg: #202a44;
-  --ring-track: #2a3557;
 }
 
 body[data-theme="light"] {
@@ -28,7 +27,6 @@ body[data-theme="light"] {
   --track: #e5e7eb;
   --panel-tint: #f2f6f2;
   --chip-bg: #edf2f7;
-  --ring-track: #e8ecf2;
 }
 
 * {
@@ -182,7 +180,6 @@ body {
 .progress-panel:hover,
 .status-pill:hover,
 .status-block:hover,
-.ring-card:hover,
 .user-dual-card:hover {
   --tilt-lift: 8px;
   --tilt-scale: var(--tilt-hover-scale, 1);
@@ -192,12 +189,6 @@ body {
 
 .card-main {
   min-height: 620px;
-}
-
-.card-metrics {
-  min-height: 620px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, #ffffff 8%) 0%, var(--surface) 100%);
 }
 
 .section-head {
@@ -541,74 +532,6 @@ body {
   margin-top: 16px;
 }
 
-.ring-list {
-  min-width: 0;
-  display: grid;
-  gap: 18px;
-}
-
-.ring-card {
-  display: grid;
-  grid-template-columns: 112px 1fr;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 22px;
-  background: var(--surface-soft);
-  border: 1px solid var(--line);
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-}
-
-.ring-shell {
-  --pct: 0;
-  --ring-color: var(--primary);
-  width: 112px;
-  height: 112px;
-  border-radius: 50%;
-  background:
-    conic-gradient(var(--ring-color) calc(var(--pct) * 1%), var(--ring-track) 0);
-  display: grid;
-  place-items: center;
-}
-
-.cpu-ring {
-  --ring-color: #2563eb;
-}
-
-.gpu-ring {
-  --ring-color: #16a34a;
-}
-
-.mem-ring {
-  --ring-color: #d97706;
-}
-
-.ring-inner {
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--surface) 92%, white 8%);
-  display: grid;
-  place-items: center;
-  box-shadow: inset 0 0 0 1px var(--line);
-}
-
-.ring-value {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.ring-copy strong {
-  display: block;
-  font-size: 1.2rem;
-}
-
-.ring-copy span {
-  display: block;
-  margin-top: 6px;
-  color: var(--muted);
-}
-
 .badge,
 .meta-chip {
   display: inline-flex;
@@ -738,15 +661,10 @@ body[data-theme="light"] .progress-marker::before {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-
-  .card-metrics {
-    width: 100%;
-  }
 }
 
 @media (max-width: 860px) {
-  .card-main,
-  .card-metrics {
+  .card-main {
     min-height: auto;
   }
 
@@ -791,44 +709,6 @@ body[data-theme="light"] .progress-marker::before {
   .status-grid,
   .meta-grid {
     display: none;
-  }
-
-  .ring-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .ring-card {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-    gap: 10px;
-    padding: 12px 8px;
-    border-radius: 18px;
-  }
-
-  .ring-shell {
-    width: 72px;
-    height: 72px;
-  }
-
-  .ring-inner {
-    width: 50px;
-    height: 50px;
-  }
-
-  .ring-value {
-    font-size: 0.78rem;
-  }
-
-  .ring-copy strong {
-    font-size: 0.94rem;
-  }
-
-  .ring-copy span {
-    margin-top: 4px;
-    font-size: 0.74rem;
-    line-height: 1.2;
   }
 }
 
@@ -923,36 +803,6 @@ body[data-theme="light"] .progress-marker::before {
 
   .progress-panel {
     padding: 14px;
-  }
-
-  .ring-list {
-    gap: 8px;
-  }
-
-  .ring-card {
-    padding: 10px 6px;
-  }
-
-  .ring-shell {
-    width: 60px;
-    height: 60px;
-  }
-
-  .ring-inner {
-    width: 42px;
-    height: 42px;
-  }
-
-  .ring-value {
-    font-size: 0.66rem;
-  }
-
-  .ring-copy strong {
-    font-size: 0.82rem;
-  }
-
-  .ring-copy span {
-    font-size: 0.66rem;
   }
 }
 
@@ -1052,6 +902,17 @@ body[data-theme="light"] .progress-marker::before {
 
 .account-status-name {
   font-weight: 600;
+}
+
+.account-status-order {
+  min-width: 26px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--chip-bg);
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .account-status-meta {

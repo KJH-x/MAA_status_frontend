@@ -37,13 +37,6 @@
       connectionLabel: "连接",
       pollingLabel: "拉取状态",
       errorLabel: "错误",
-      telemetryKicker: "系统监控",
-      telemetryTitle: "系统遥测",
-      cpuLabel: "CPU",
-      cpuNote: "处理器占用",
-      gpuLabel: "GPU",
-      gpuNote: "图形占用",
-      memoryLabel: "内存",
       sourceLabel: "来源：{value}",
       pending: "等待中",
       none: "无",
@@ -120,13 +113,6 @@
       connectionLabel: "Connection",
       pollingLabel: "Polling",
       errorLabel: "Error",
-      telemetryKicker: "System Monitor",
-      telemetryTitle: "System Telemetry",
-      cpuLabel: "CPU",
-      cpuNote: "Processor Usage",
-      gpuLabel: "GPU",
-      gpuNote: "Graphics Usage",
-      memoryLabel: "Memory",
       sourceLabel: "Source: {value}",
       pending: "pending",
       none: "None",
@@ -203,13 +189,6 @@
       connectionLabel: "連線",
       pollingLabel: "輪詢狀態",
       errorLabel: "錯誤",
-      telemetryKicker: "系統監控",
-      telemetryTitle: "系統遙測",
-      cpuLabel: "CPU",
-      cpuNote: "處理器使用率",
-      gpuLabel: "GPU",
-      gpuNote: "圖形使用率",
-      memoryLabel: "記憶體",
       sourceLabel: "來源：{value}",
       pending: "等待中",
       none: "無",
@@ -286,13 +265,6 @@
       connectionLabel: "接続",
       pollingLabel: "取得状態",
       errorLabel: "エラー",
-      telemetryKicker: "システムモニター",
-      telemetryTitle: "システムテレメトリ",
-      cpuLabel: "CPU",
-      cpuNote: "プロセッサ使用率",
-      gpuLabel: "GPU",
-      gpuNote: "グラフィックス使用率",
-      memoryLabel: "メモリ",
       sourceLabel: "ソース: {value}",
       pending: "待機中",
       none: "なし",
@@ -405,17 +377,7 @@
     pollStatusCompact: document.getElementById("poll-status-compact"),
     pollingLabel: document.getElementById("polling-label"),
     pollingLabelCompact: document.getElementById("polling-label-compact"),
-    themeToggle: document.getElementById("theme-toggle"),
-    telemetryTitle: document.getElementById("telemetry-title"),
-    cpuLabel: document.getElementById("cpu-label"),
-    cpuNote: document.getElementById("cpu-note"),
-    gpuLabel: document.getElementById("gpu-label"),
-    gpuNote: document.getElementById("gpu-note"),
-    memoryLabel: document.getElementById("memory-label"),
-    cpuValue: document.getElementById("cpu-value"),
-    gpuValue: document.getElementById("gpu-value"),
-    memValue: document.getElementById("mem-value"),
-    memDetail: document.getElementById("mem-detail")
+    themeToggle: document.getElementById("theme-toggle")
   };
 
   function detectLocale() {
@@ -487,12 +449,6 @@
     setTextContent(els.connectionLabelCompact, t("connectionLabel"));
     setTextContent(els.pollingLabel, t("pollingLabel"));
     setTextContent(els.pollingLabelCompact, t("pollingLabel"));
-    setTextContent(els.telemetryTitle, t("telemetryTitle"));
-    setTextContent(els.cpuLabel, t("cpuLabel"));
-    setTextContent(els.cpuNote, t("cpuNote"));
-    setTextContent(els.gpuLabel, t("gpuLabel"));
-    setTextContent(els.gpuNote, t("gpuNote"));
-    setTextContent(els.memoryLabel, t("memoryLabel"));
     setTextContent(els.queueTitle, t("queueTitle"));
     setTextContent(els.activePlanLabel, t("activePlanLabel"));
     setTextContent(els.accountStatusLabel, t("accountStatusLabel"));
@@ -886,6 +842,28 @@
     return parts.join(" · ");
   }
 
+  function getAccountExecutionOrder(data) {
+    const order = new Map();
+    const activeTargets = data.active_plan && Array.isArray(data.active_plan.targetAccounts)
+      ? data.active_plan.targetAccounts
+      : [];
+    if (activeTargets.length) {
+      activeTargets.forEach(function (id, index) {
+        if (!order.has(id)) {
+          order.set(id, index + 1);
+        }
+      });
+      return order;
+    }
+    const items = data.run_list || [];
+    items.forEach(function (item) {
+      if (item.status !== "excluded") {
+        order.set(item.id, order.size + 1);
+      }
+    });
+    return order;
+  }
+
   function renderAccountStatusList(data) {
     if (!els.accountStatusList) {
       return;
@@ -896,9 +874,17 @@
       els.accountStatusList.textContent = t("none");
       return;
     }
+    const order = getAccountExecutionOrder(data);
     items.forEach(function (item) {
       const li = document.createElement("li");
       li.className = "account-status-item";
+      const orderNumber = order.get(item.id);
+      if (orderNumber != null) {
+        const orderBadge = document.createElement("span");
+        orderBadge.className = "account-status-order";
+        orderBadge.textContent = "#" + orderNumber;
+        li.appendChild(orderBadge);
+      }
       const status = String(item.status || "");
       const statusKey = "status" + status.charAt(0).toUpperCase() + status.slice(1);
       const label = status && t(statusKey) !== statusKey ? t(statusKey) : (status || "-");
@@ -961,8 +947,6 @@
   }
 
   function renderStatus(data) {
-    const telemetry = data.telemetry || {};
-    const mem = telemetry.mem || {};
     const executionConfigs = getExecutionConfigs(data);
 
     els.sourceLabel.textContent = t("sourceLabel", { value: data.source || "-" });
@@ -995,22 +979,9 @@
     if (els.connectionTextCompact) {
       els.connectionTextCompact.textContent = data.connection || "-";
     }
-    renderRing(document.querySelector(".cpu-ring"), els.cpuValue, telemetry.cpu, "%");
-    renderRing(document.querySelector(".gpu-ring"), els.gpuValue, telemetry.gpu, "%");
-    renderRing(document.querySelector(".mem-ring"), els.memValue, mem.percent, "%");
-    els.memDetail.textContent = `${Number(mem.used_gb || 0).toFixed(1)} / ${Number(mem.total_gb || 0).toFixed(1)} GB`;
     renderAccountStatusList(data);
     renderActivePlan(data);
     renderPendingQueue(data);
-  }
-
-  function renderRing(shell, valueEl, rawValue, suffix) {
-    if (!shell || !valueEl) {
-      return;
-    }
-    const value = Math.max(0, Math.min(100, Number(rawValue || 0)));
-    shell.style.setProperty("--pct", String(value));
-    valueEl.textContent = `${value.toFixed(0)}${suffix}`;
   }
 
   function applyTheme(theme) {
