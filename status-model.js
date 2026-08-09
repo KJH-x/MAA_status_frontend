@@ -143,6 +143,7 @@
     var phase = schedulerBlocked
       ? { cs: "Blocked", pp: "failed" }
       : (phaseMap[raw.phase] || { cs: raw.phase, pp: raw.phase });
+    // telemetry display planned removal
     var telemetry = raw.telemetry || {};
     var memory = telemetry.memory || {};
     var publishedAt = parseTimestampSeconds(raw.publishedAt);
